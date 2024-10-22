@@ -12,31 +12,6 @@ Which specific bus traffic applications are you analyzing?
 # 5/Applications Analyzed  
 \*TRAFI: An app available on iOS and Android, developed by TRAFI, first launched in 2014\. Initially starting in Vilnius, it has expanded to cities across Europe, including Brussels, São Paulo, Berlin, Leeds, London, and various locations in Lithuania   
 \*BUSFOR:An app available on iOS and Android, developed by BlaBlaCar. It operates across Central-Eastern Europe, serving countries such as Russia, Ukraine, the Czech Republic, and Poland.  
-3. Comparative Table
-
-
-Criteria 
-[Item 1]
-[Item 2] 
- [Item 3] 
-Performance
-[Rating/Score]
-[Rating/Score]
-[Rating/Score]
-Usability
-[Rating/Score]
-[Rating/Score]
-[Rating/Score]
-Cost
-[Cost Value] 
-[Cost Value] 
-[Cost Value] 
-Scalability
-[Rating/Score]
-[Rating/Score]
-[Rating/Score]
-
-
 # 6/Results & Gap  
 What are the main findings from your analysis?  
 Are there any gaps or limitations you identified in the existing apps?  
