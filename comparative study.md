@@ -7,7 +7,8 @@ The primary objective of this study is to analyze the features of existing bus t
 # 4/ Methods & Apps  
 This study employs a comprehensive, multi-dimensional approach to evaluate several bus traffic applications:
 
--App Testing: We will download and rigorously test selected bus traffic applications on both iOS and Android platforms, assessing real-world performance, usability, and overall functionality.
+## App Testing: 
+We will download and rigorously test selected bus traffic applications on both iOS and Android platforms, assessing real-world performance, usability, and overall functionality.
 -User Reviews: A detailed analysis of user feedback from app stores will be conducted to capture insights into user satisfaction, recurring issues, and the most appreciated features.
 -Feature Comparison: We will perform an in-depth comparison of key functionalities across the apps, focusing on real-time tracking, route planning, notifications, and the user interface design. 
 # 5/Applications Analyzed  
