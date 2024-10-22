@@ -21,5 +21,5 @@ Based on our findings, we suggest the following improvements for our app:
 - A simplified, user-friendly interface that allows quick route planning and schedule updates.
 - Integration of personalized notifications for delays or route changes.
 - Expanding geographical coverage to underserved areas. 
-  # 7/ Conclusion
-What are the key takeaways from your study?  
+# 7/ Conclusion
+
