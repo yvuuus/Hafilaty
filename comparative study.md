@@ -1,25 +1,27 @@
 #  1/ Intro   
-In today's fast-paced world, the integration of technology into daily life is more crucial than ever, especially in public transportation. This study focuses on comparing existing bus traffic applications in the market to identify key features and functionalities that resonate with users. By analyzing these apps, we aim to gather valuable insights and ideas for developing our own application, ensuring it meets the needs and preferences of commuters.  
+In today’s fast-paced world, the seamless integration of technology into everyday life is more important than ever, particularly in public transportation. This study examines existing bus traffic applications to identify key features and functionalities that resonate with users. By analyzing these apps, we aim to extract valuable insights and innovative ideas that will inform the development of our own application, ensuring it meets the needs and preferences of modern commuters.
 # 2/ Abstract  
+This study evaluates leading bus traffic applications to identify essential features that enhance the commuter experience. By comparing the strengths and shortcomings of apps such as TRAFI, BUSFOR, and Chalo, we gain a deeper understanding of user expectations in areas such as real-time tracking, usability, and overall performance. These insights will guide the development of a more efficient, user-centric bus tracking app, addressing the existing gaps in functionality and design that currently hinder commuter satisfaction.
 # 3/ Purpose  
-This study aims to compare the features of existing bus traffic applications to identify their strengths and weaknesses, focusing on what is most helpful for users. By evaluating these aspects, we seek to gather insights that will inform the development of our own app, ensuring it effectively meets commuter needs.  
+The primary objective of this study is to analyze the features of existing bus traffic applications to identify their respective strengths and weaknesses. By thoroughly evaluating these apps, we aim to gather critical insights that will shape the development of our own solution, ensuring it addresses commuter needs effectively while overcoming the limitations present in current market offerings.  
 # 4/ Methods & Apps  
-In this study, we will employ a multi-faceted approach to evaluate various bus traffic applications:  
-App Testing: We will download and test selected bus traffic apps on both iOS and Android platforms. This hands-on evaluation will focus on real-world usability and performance.  
-User Reviews: We will analyze user feedback from app stores to gather insights into user experiences, common issues, and overall satisfaction.  
-Feature Comparison: A detailed comparison of the features offered by each app will be conducted, focusing on functionalities such as real-time tracking, route planning, and user interface design.  
-Which specific bus traffic applications are you analyzing?  
+This study employs a comprehensive, multi-dimensional approach to evaluate several bus traffic applications:
+
+-App Testing: We will download and rigorously test selected bus traffic applications on both iOS and Android platforms, assessing real-world performance, usability, and overall functionality.
+-User Reviews: A detailed analysis of user feedback from app stores will be conducted to capture insights into user satisfaction, recurring issues, and the most appreciated features.
+-Feature Comparison: We will perform an in-depth comparison of key functionalities across the apps, focusing on real-time tracking, route planning, notifications, and the user interface design. 
 # 5/Applications Analyzed  
-\*TRAFI: An app available on iOS and Android, developed by TRAFI, first launched in 2014\. Initially starting in Vilnius, it has expanded to cities across Europe, including Brussels, São Paulo, Berlin, Leeds, London, and various locations in Lithuania   
-\*BUSFOR:An app available on iOS and Android, developed by BlaBlaCar. It operates across Central-Eastern Europe, serving countries such as Russia, Ukraine, the Czech Republic, and Poland.  
+-TRAFI: Launched in 2014 and available on both iOS and Android platforms, TRAFI began in Vilnius and has since expanded to cities across Europe, including Brussels, São Paulo, Berlin, Leeds, London, and other locations throughout Lithuania.
+-BUSFOR: Developed by BlaBlaCar, BUSFOR operates across Central and Eastern Europe, serving countries such as Russia, Ukraine, the Czech Republic, and Poland.
+-Chalo: A bus tracking app widely used in India, offering real-time bus arrival information and digital ticketing, Chalo operates in over 50 cities, providing commuters with accurate tracking and added convenience through its ticketing feature. 
 # 6/Results & Gap  
-What are the main findings from your analysis?  
-Are there any gaps or limitations you identified in the existing apps?  
-Recommendations for Our App  
+
+
+# 7/Recommendations for Our App  
 Based on our findings, we suggest the following improvements for our app:
 - Enhanced real-time tracking accuracy using more precise GPS data.
 - A simplified, user-friendly interface that allows quick route planning and schedule updates.
 - Integration of personalized notifications for delays or route changes.
 - Expanding geographical coverage to underserved areas. 
 # 7/ Conclusion
-
+This study underscores the necessity for accurate real-time tracking and a more intuitive user interface in bus traffic applications. By addressing these critical gaps, our app has the potential to deliver a superior, user-friendly commuting experience, tailored to the needs of modern travelers and providing tangible improvements over existing solutions.
