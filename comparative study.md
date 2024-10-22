@@ -20,6 +20,11 @@ Results & Gap
 What are the main findings from your analysis?  
 Are there any gaps or limitations you identified in the existing apps?  
 Recommendations for Our App  
+Based on our findings, we suggest the following improvements for our app:
+Enhanced real-time tracking accuracy using more precise GPS data.
+A simplified, user-friendly interface that allows quick route planning and schedule updates.
+Integration of personalized notifications for delays or route changes.
+Expanding geographical coverage to underserved areas.
 Based on your findings, what specific improvements would you suggest for your app?  
 Conclusion  
 What are the key takeaways from your study?  
