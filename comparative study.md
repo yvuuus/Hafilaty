@@ -25,9 +25,14 @@ Chalo: A bus tracking app widely used in India, offering real-time bus arrival i
 
 # 7/Recommendations for Our App  
 Based on our findings, we suggest the following improvements for our app:
+
  Enhanced real-time tracking accuracy using more precise GPS data.
+ 
  A simplified, user-friendly interface that allows quick route planning and schedule updates.
+ 
  Integration of personalized notifications for delays or route changes.
+ 
  Expanding geographical coverage to underserved areas. 
+ 
 # 7/ Conclusion
 This study underscores the necessity for accurate real-time tracking and a more intuitive user interface in bus traffic applications. By addressing these critical gaps, our app has the potential to deliver a superior, user-friendly commuting experience, tailored to the needs of modern travelers and providing tangible improvements over existing solutions.
