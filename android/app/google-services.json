@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "826481171173",
+    "project_id": "hafilaty-caf68",
+    "storage_bucket": "hafilaty-caf68.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:826481171173:android:4c3385f6d9d95e28e0d20c",
+        "android_client_info": {
+          "package_name": "com.egoncastlr.bus_tracking_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDULR1PxZjlXxdnV4-Btx_ZF3WFf1ocsYw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
