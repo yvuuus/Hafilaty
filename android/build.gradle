@@ -1,0 +1,26 @@
+// Déclaration du plugin dans la section plugins
+plugins {
+    id 'com.android.application' version '8.0.2' apply false
+    id 'com.google.gms.google-services' version '4.4.2' apply false  // Ajouter le plugin Firebase ici
+    classpath 'com.google.gms:google-services:4.4.2'
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
+
