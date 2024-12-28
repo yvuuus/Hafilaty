@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:bus_tracking_app/screens/login_screen.dart'; // Import de LoginScreen
 
 class RegisterScreen extends StatefulWidget {
@@ -17,6 +19,58 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _passwordVisible = false;
   bool _confirmPasswordVisible = false;
   final _formkey = GlobalKey<FormState>();
+
+
+    List list =[];
+ Future ReadData() async {
+  try {
+    var url = "http://192.168.56.1/project/crud/readData.php";
+    var res = await http.get(Uri.parse(url));
+
+    if (res.statusCode == 200) {
+      print("ddddddddddddddddDEBUG: Raw Response: ${res.body}");
+
+      var red = jsonDecode(res.body);
+      setState(() {
+        list.addAll(red);
+      });
+      print(list);
+    } else {
+      print("Error fetching data: ${res.statusCode}");
+    }
+  } catch (e) {
+    print("Exception occurred: $e");
+  }
+}
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+     WidgetsBinding.instance.addPostFrameCallback((_) async {
+    await getData(); // Fetch data after the first frame is rendered
+  });
+  }
+
+  getData()async{
+    await ReadData();
+  }
+
+ Future AddData()async{
+  var url ="http://192.168.56.1/project/crud/addData.php";
+  var res = await http.post(Uri.parse(url),body: {
+    'user_name': nameTextEditingcontroller.text,
+    'user_email':emailEditingcontroller.text,
+    'user_psw':passwordTextEditingcontroller.text
+  });
+
+  if(res.statusCode==200){
+    var red = jsonDecode(res.body);
+    print(red);
+  }
+ }
+
 
   @override
   Widget build(BuildContext context) {
@@ -172,11 +226,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formkey.currentState?.validate() ?? false) {
-                            // Ajouter la logique d'inscription ici
-                          }
-                        },
+                           // Attempt to register user
+                           await AddData();
+    
+                            // Show success message and navigate back
+                            ScaffoldMessenger.of(context).showSnackBar(
+                             SnackBar(
+                                content: const Text(
+                                 "Registration successful!",
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                ),
+                                backgroundColor: Colors.green,
+                                behavior: SnackBarBehavior.floating,
+                             ),
+                            );
+
+                           // Navigate back to login screen after a short delay
+                           Future.delayed(const Duration(seconds: 2), () {
+                             Navigator.pushReplacement(
+                               context,
+                               MaterialPageRoute(builder: (context) => const LoginScreen()),
+                             );
+                           });
+                         }
+                        }
+                        ,
                         child: const Text(
                           "Sign Up",
                           style: TextStyle(
