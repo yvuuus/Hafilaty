@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool userExists = list.any((user) =>
-      user['email'] == email && user['password'] == password);
+      user['user_email'] == email && user['user_psw'] == password);
 
   if (userExists) {
     ScaffoldMessenger.of(context).showSnackBar(
