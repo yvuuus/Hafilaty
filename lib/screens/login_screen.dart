@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bus_tracking_app/screens/register_screen.dart';
+import 'package:bus_tracking_app/screens/map_screen.dart'; // Importez MapScreen ici
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,6 +12,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailTextEditingController = TextEditingController();
   final passwordTextEditingController = TextEditingController();
+  final _formKey = GlobalKey<FormState>(); // Global key for the form
   bool _passwordVisible = false;
 
   @override
@@ -24,11 +26,11 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 207, 176, 221),
+          backgroundColor: Color(0xFFE1BEE7),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.pop(context); // Retourne à la page précédente
+              Navigator.pop(context);
             },
           ),
         ),
@@ -46,140 +48,157 @@ class _LoginScreenState extends State<LoginScreen> {
           child: ListView(
             padding: const EdgeInsets.all(0),
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: 0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildIconCircle(Icons.person, "Passenger"),
                 ],
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _buildTextFieldWithLabel(
-                          controller: emailTextEditingController,
-                          label: "Email",
-                          hintText: "Email",
-                          icon: Icons.email,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Please enter your email";
-                            }
-                            final emailRegExp = RegExp(
-                                r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-                            if (!emailRegExp.hasMatch(value)) {
-                              return "Please enter a valid email address";
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        _buildTextFieldWithLabel(
-                          controller: passwordTextEditingController,
-                          label: "Password",
-                          hintText: "Password",
-                          icon: Icons.lock,
-                          obscureText: !_passwordVisible,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Please enter your password";
-                            }
-                            return null;
-                          },
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _passwordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: const Color.fromARGB(255, 246, 237, 252),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _passwordVisible = !_passwordVisible;
-                              });
+                    child: Form(
+                      key: _formKey, // Form with global key
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _buildTextFieldWithLabel(
+                            controller: emailTextEditingController,
+                            label: "Email",
+                            hintText: "Email",
+                            icon: Icons.email,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Please enter your email";
+                              }
+                              final emailRegExp = RegExp(
+                                  r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                              if (!emailRegExp.hasMatch(value)) {
+                                return "Please enter a valid email address";
+                              }
+                              return null;
                             },
                           ),
-                        ),
-                        const SizedBox(height: 15),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextButton(
-                            onPressed: () {
-                              // Logic for password recovery
+                          const SizedBox(height: 20),
+                          _buildTextFieldWithLabel(
+                            controller: passwordTextEditingController,
+                            label: "Password",
+                            hintText: "Password",
+                            icon: Icons.lock,
+                            obscureText: !_passwordVisible,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Please enter your password";
+                              }
+                              return null;
                             },
-                            child: Text(
-                              "Forgot Password?",
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _passwordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: const Color(0xFF6A1B9A),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: TextButton(
+                              onPressed: () {
+                                // Logic for password recovery
+                              },
+                              child: Text(
+                                "Forgot Password?",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.purple.shade700,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 15,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            onPressed: () {
+                              // Validate form before proceeding
+                              if (_formKey.currentState?.validate() ?? false) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MapScreen()),
+                                );
+                              } else {
+                                // Show an error if the form is invalid
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Please fill all fields"),
+                                  ),
+                                );
+                              }
+                            },
+                            child: const Text(
+                              "Sign In",
                               style: TextStyle(
+                                fontSize: 17,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.purple.shade700,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 15,
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.purple.shade700,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 15,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          onPressed: () {
-                            // Logic for sign-in
-                          },
-                          child: const Text(
-                            "Sign In",
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.purple.shade700,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 15,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RegisterScreen()),
+                              );
+                            },
+                            child: const Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => RegisterScreen()),
-                            );
-                          },
-                          child: const Text(
-                            "Sign Up",
-                            style: TextStyle(
-                              fontSize: 17,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          const SizedBox(height: 10),
+                          Image.asset(
+                            darkTheme
+                                ? 'images/passenger.png'
+                                : 'images/passenger.png',
+                            fit: BoxFit.contain,
                           ),
-                        ),
-                        const SizedBox(height: 40),
-                        Image.asset(
-                          darkTheme
-                              ? 'images/passenger.png'
-                              : 'images/passenger.png',
-                          fit: BoxFit.contain,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],

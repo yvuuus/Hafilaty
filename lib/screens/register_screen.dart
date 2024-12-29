@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:bus_tracking_app/screens/login_screen.dart'; // Import de LoginScreen
+// Import de LoginScreen
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -29,7 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 207, 176, 221),
+          backgroundColor: Color(0xFFE1BEE7),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -51,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: ListView(
             padding: const EdgeInsets.all(0),
             children: [
-              const SizedBox(height: 60), // Réduit l'espace avant l'icône
+              const SizedBox(height: 0), // Réduit l'espace avant l'icône
               Center(
                 child:
                     _buildIconCircle(Icons.person, "Passenger"), // Icône centré
@@ -186,7 +185,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 0),
                       Image.asset(
                         darktheme
                             ? 'images/passenger.png'

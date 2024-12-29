@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bus_tracking_app/screens/login_screen.dart'; // Import de login_screen.dart
+import 'package:bus_tracking_app/screens/login_screen.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
   const RoleSelectionScreen({super.key});
@@ -8,57 +8,93 @@ class RoleSelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
             colors: [
-              Colors.deepPurple.shade100, // Dégradé doux de violet
-              Colors.deepPurple.shade50,
+              Color(0xFFE1BEE7),
+              Color(0xFF9575CD),
+              Color(0xFFEDE7F6), // Blanc cassé
             ],
           ),
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 40),
-                const SizedBox(height: 60),
-                RoleCard(
-                  icon: Icons.person_outline,
-                  title: 'Bus Passenger',
-                  onTap: () {
-                    // Naviguer vers LoginScreen pour le rôle Passenger
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
+          child: Column(
+            children: [
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    Positioned(
+                      top: -100,
+                      right: -50,
+                      child: _buildCircle(
+                        size: 200,
+                        color: Colors.white.withOpacity(0.1),
                       ),
-                    );
-                  },
+                    ),
+                    Positioned(
+                      bottom: -100,
+                      left: -50,
+                      child: _buildCircle(
+                        size: 300,
+                        color: Colors.white.withOpacity(0.2),
+                      ),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Choose Your Role",
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                        RoleCard(
+                          icon: Icons.person_outline,
+                          title: 'Bus Passenger',
+                          color: Colors.purple.shade300,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const LoginScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        RoleCard(
+                          icon: Icons.directions_bus_outlined,
+                          title: 'Bus Driver',
+                          color: Colors.deepPurple.shade300,
+                          onTap: () {
+                            // Logique pour le Driver
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
-                RoleCard(
-                  icon: Icons.directions_bus_outlined,
-                  title: 'Bus Driver',
-                  onTap: () {
-                    // Logique pour Driver (par exemple, redirection ou autre fonctionnalité)
-                  },
-                ),
-                const SizedBox(height: 20),
-                RoleCard(
-                  icon: Icons.business_outlined,
-                  title: 'Bus Agency',
-                  onTap: () {
-                    // Logique pour Agency (par exemple, redirection ou autre fonctionnalité)
-                  },
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCircle({required double size, required Color color}) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
       ),
     );
   }
@@ -67,62 +103,50 @@ class RoleSelectionScreen extends StatelessWidget {
 class RoleCard extends StatelessWidget {
   final IconData icon;
   final String title;
+  final Color color;
   final VoidCallback onTap;
 
   const RoleCard({
     super.key,
     required this.icon,
     required this.title,
+    required this.color,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      shadowColor: Colors.deepPurple.shade200,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color:
-                      Colors.deepPurple.shade100, // Couleur de fond de l'icône
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  icon,
-                  size: 40,
-                  color: Colors.deepPurple.shade700,
-                ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(horizontal: 24.0),
+        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.5),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 36, color: color),
+            const SizedBox(width: 16),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: color,
               ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Colors.deepPurple.shade800,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18,
-                      ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.deepPurple.shade300,
-                size: 20,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
