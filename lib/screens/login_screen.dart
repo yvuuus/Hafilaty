@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:bus_tracking_app/screens/register_screen.dart';
 import 'package:http/http.dart' as http;
-
-import 'map_page.dart';
+import 'package:bus_tracking_app/themeProvider/globals.dart';
+import 'btm_nav.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -79,11 +79,11 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.green,
       ),
     );
+    loggedInEmail = emailTextEditingController.text;
     // Navigate to the next screen or perform other actions
-    // Navigate to the Map Page
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const MapPage()),
+      MaterialPageRoute(builder: (context) =>  HomePage()),
     );
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
