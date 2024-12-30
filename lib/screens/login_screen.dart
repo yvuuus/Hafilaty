@@ -75,9 +75,14 @@ class _LoginScreenState extends State<LoginScreen> {
   if (userExists) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("Login successful!"),
-        backgroundColor: Colors.green,
-      ),
+  content: const Text("Login successful!"),
+  backgroundColor: const Color.fromARGB(255, 200, 140, 240),
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
+  ),
+  behavior: SnackBarBehavior.floating, // Optional: Makes it float above the bottom
+),
+
     );
     loggedInEmail = emailTextEditingController.text;
     // Navigate to the next screen or perform other actions
@@ -88,9 +93,14 @@ class _LoginScreenState extends State<LoginScreen> {
   } else {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("Invalid email or password. $list"),
-        backgroundColor: Colors.red,
-      ),
+  content: const Text("Invalid email or password."),
+  backgroundColor: const Color.fromARGB(255, 213, 138, 243),
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(20), // Adjust the radius as needed
+  ),
+  behavior: SnackBarBehavior.floating, // Optional: Makes it float above the bottom
+),
+
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'map_screen.dart';
 import 'schedule_screen.dart';
 import 'profile_screen.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 
 void main() {
   runApp(MyApp());
@@ -35,29 +36,40 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex, // Which tab is selected
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index; // Update selected tab
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
+      bottomNavigationBar: Container(
+        color: const Color.fromARGB(255, 237, 161, 251), // Purple background for the nav bar
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
+          child: GNav(
+            gap: 8,
+            backgroundColor: const Color.fromARGB(255, 237, 161, 251),
+            color: Colors.white, // Icon and text color for unselected tabs
+            activeColor: Colors.white, // Icon and text color for selected tab
+            tabBackgroundColor: const Color.fromARGB(255, 207, 118, 245), // Background color for the selected tab
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            selectedIndex: _currentIndex, // Current selected index
+            onTabChange: (index) {
+              setState(() {
+                _currentIndex = index; // Update selected tab
+              });
+            },
+            tabs: const [
+              GButton(
+                icon: Icons.map,
+                text: 'Map',
+              ),
+              GButton(
+                icon: Icons.schedule,
+                text: 'Schedule',
+              ),
+              GButton(
+                icon: Icons.person,
+                text: 'Profile',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.schedule),
-            label: 'Schedule',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        ),
       ),
     );
   }

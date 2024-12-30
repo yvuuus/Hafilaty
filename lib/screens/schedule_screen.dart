@@ -12,7 +12,6 @@ class ScheduleScreen extends StatefulWidget {
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
   List<Map<String, dynamic>> list = [];
-  List<String> Data = [];
 
   Future<void> GetData() async {
     try {
@@ -32,28 +31,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     }
   }
 
-  Future<void> Suggestion() async {
-    try {
-      var url = 'http://192.168.56.1/project/crud/suggestions.php';
-      var res = await http.get(Uri.parse(url));
-
-      if (res.statusCode == 200) {
-        var data = jsonDecode(res.body) as List;
-        setState(() {
-          Data = data.map((item) => item['schedule_name'].toString()).toList();
-        });
-      }
-    } catch (e) {
-      print("Error fetching suggestions: $e");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await GetData();
-      await Suggestion();
     });
   }
 
@@ -65,9 +47,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              showSearch(
-                context: context,
-                delegate: SearchUsers(data: Data),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchPage()),
               );
             },
             icon: const Icon(Icons.search),
@@ -91,7 +73,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       );
                     },
                     child: Container(
-                      color: const Color.fromARGB(255, 234, 194, 207),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 234, 194, 207),
+                        borderRadius: BorderRadius.circular(15), // rounded corners
+                      ),
                       child: ListTile(
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -139,105 +124,150 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 }
 
-class SearchUsers extends SearchDelegate {
-  final List<String> data;
-  SearchUsers({required this.data});
+class SearchPage extends StatefulWidget {
+  const SearchPage({Key? key}) : super(key: key);
 
-  Future<Map<String, dynamic>?> GetScheduleData(String scheduleName) async {
+  @override
+  State<SearchPage> createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
+  String departQuery = "";
+  String destinationQuery = "";
+  List<Map<String, dynamic>> searchResults = [];
+
+  Future<void> fetchSearchResults() async {
     try {
       var url = 'http://192.168.56.1/project/crud/search.php';
-      var res = await http.post(Uri.parse(url), body: {'query': scheduleName});
+      var res = await http.post(Uri.parse(url), body: {
+        'depart': departQuery,
+        'destination': destinationQuery,
+      });
 
       if (res.statusCode == 200) {
-        var scheduleData = jsonDecode(res.body) as List;
-        return scheduleData.isNotEmpty ? scheduleData[0] as Map<String, dynamic> : null;
+        var data = jsonDecode(res.body) as List;
+        setState(() {
+          searchResults = data.map((item) => item as Map<String, dynamic>).toList();
+        });
+      } else {
+        print("Error fetching search results: ${res.statusCode}");
       }
     } catch (e) {
-      print("Error fetching schedule data: $e");
+      print("Error fetching search results: $e");
     }
-    return null;
   }
 
   @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      IconButton(
-        onPressed: () {
-          query = "";
-        },
-        icon: const Icon(Icons.close),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Search Schedules'),
       ),
-    ];
-  }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        close(context, null);
-      },
-      icon: const Icon(Icons.arrow_back),
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    return FutureBuilder(
-      future: GetScheduleData(query),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text("Error: ${snapshot.error}"));
-        }
-        if (!snapshot.hasData) {
-          return const Center(child: Text("No results found"));
-        }
-
-        var schedule = snapshot.data as Map<String, dynamic>;
-        return ListTile(
-          title: Text(schedule['schedule_name']),
-          subtitle: Text('${schedule['depart']} to ${schedule['destination']}'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ScheduleDetailsPage(schedule: schedule),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    var suggestions = query.isEmpty
-        ? data
-        : data.where((item) => item.toLowerCase().contains(query.toLowerCase())).toList();
-    return ListView.builder(
-      itemCount: suggestions.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          onTap: () async {
-            var selected = suggestions[index];
-            var schedule = await GetScheduleData(selected);
-
-            if (schedule != null) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ScheduleDetailsPage(schedule: schedule),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onChanged: (value) {
+                departQuery = value;
+              },
+              decoration: InputDecoration(
+                labelText: "Depart",
+                prefixIcon: const Icon(Icons.location_on),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
-              );
-            }
-          },
-          leading: const Icon(Icons.bus_alert_outlined),
-          title: Text(suggestions[index]),
-        );
-      },
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onChanged: (value) {
+                destinationQuery = value;
+              },
+              decoration: InputDecoration(
+                labelText: "Destination",
+                prefixIcon: const Icon(Icons.flag),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: fetchSearchResults,
+            child: const Text("Search"),
+          ),
+          Expanded(
+            child: searchResults.isEmpty
+                ? const Center(child: Text("No results found"))
+                : ListView.builder(
+                    itemCount: searchResults.length,
+                    itemBuilder: (context, index) {
+                      var schedule = searchResults[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ScheduleDetailsPage(schedule: schedule),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 234, 194, 207),
+                              borderRadius: BorderRadius.circular(15), // rounded corners
+                            ),
+                            child: ListTile(
+                              title: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${schedule["depart"]}",
+                                        style: const TextStyle(fontSize: 18),
+                                      ),
+                                      Text(
+                                        "${schedule["depart_time"]}",
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
+                                  const Expanded(
+                                    child: Center(
+                                      child: Icon(Icons.arrow_forward),
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${schedule["destination"]}",
+                                        style: const TextStyle(fontSize: 18),
+                                      ),
+                                      Text(
+                                        "${schedule["destination_time"]}",
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }
