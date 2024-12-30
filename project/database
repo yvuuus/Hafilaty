@@ -1,0 +1,47 @@
+-- u ll need to install xampp on the server and change the ip addresse in the flutter coed to ur machine ip@
+--create a db called project and copy this code in your -phpMyAdmine- 
+-- Create the users table
+CREATE TABLE users (
+    user_id INT PRIMARY KEY,
+    user_name VARCHAR(100),
+    user_email VARCHAR(100),
+    user_psw VARCHAR(100)
+);
+
+-- Insert data into the users table
+INSERT INTO users (user_id, user_name, user_email, user_psw) VALUES
+(1, 'one', 'one@gmail.com', '123456'),
+(2, 'two', 'two@gmail.com', '123456'),
+(4, 'three', 'three@gmail.com', '123456'),
+(7, 'five', 'five@gmail.com', '123456'),
+(9, 'six', 'six@gmail.com', '123456'),
+(10, 'abdellaoui imtinane', 'abdellaoui7imtinane@gmail.com', '123456'),
+(11, 'four', 'four@gmail.com', '123456'),
+(12, 'eight', 'eight@gmail.com', '123456');
+
+-- Create the schedule table
+CREATE TABLE schedule (
+    schedule_id INT PRIMARY KEY,
+    schedule_name VARCHAR(100),
+    depart VARCHAR(100),
+    destination VARCHAR(100),
+    depart_time TIME,
+    destination_time TIME,
+    depart_address VARCHAR(255),
+    destination_address VARCHAR(255),
+    price VARCHAR(50),
+    notification VARCHAR(10)
+);
+
+-- Insert data into the schedule table
+INSERT INTO schedule (schedule_id, schedule_name, depart, destination, depart_time, destination_time, depart_address, destination_address, price, notification) VALUES
+(1, 'oued romane baba hassen', 'oued romane', 'baba hassen', '08:00', '08:30', 'Avenue Mohamed V, Oued Romane', 'Rue Kherroubi, Baba Hassen', '45 DZD', 'off'),
+(2, 'el achour shaoula', 'el achour', 'shaoula', '09:00', '09:40', 'Boulevard Zoubir, El Achour', 'Avenue Didouche Mourad, Shaoula', '55 DZD', 'off'),
+(3, 'sebala draria', 'sebala', 'draria', '10:00', '10:40', 'Rue Ali Bouali, Sebala', 'Place Draria, Draria', '60 DZD', 'off'),
+(4, 'baba hassen oued tarfa', 'baba hassen', 'oued tarfa', '11:00', '11:45', 'Avenue Larbi Ben Mhidi, Baba Hassen', 'Rue Belouizdad, Oued Tarfa', '65 DZD', 'off'),
+(5, 'shaoula el achour', 'shaoula', 'el achour', '12:00', '12:30', 'Rue Boudraa, Shaoula', 'Boulevard Boumendjel, El Achour', '50 DZD', 'off'),
+(6, 'draria sebala', 'draria', 'sebala', '13:00', '13:35', 'Rue Boudjemâ, Draria', 'Boulevard Sidi Mhamed, Sebala', '70 DZD', 'off'),
+(7, 'oued romane el achour', 'oued romane', 'el achour', '14:00', '14:45', 'Place El Mechouar, Oued Romane', 'Rue Ben M’Hidi, El Achour', '75 DZD', 'off'),
+(8, 'sebala oued romane', 'sebala', 'oued romane', '15:00', '15:40', 'Avenue Ahmed Ben Bella, Sebala', 'Boulevard Al Amir Khaled, Oued Romane', '80 DZD', 'off'),
+(9, 'baba hassen draria', 'baba hassen', 'draria', '16:00', '16:30', 'Place Boudjemaa, Baba Hassen', 'Rue Hamlaoui, Draria', '85 DZD', 'off'),
+(10, 'oued tarfa shaoula', 'oued tarfa', 'shaoula', '17:00', '17:45', 'Avenue Hachemi, Oued Tarfa', 'Rue Khemisti, Shaoula', '90 DZD', 'off');
