@@ -7,7 +7,8 @@ import 'package:bus_tracking_app/themeProvider/theme_provider.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  debugPrint = (String? message, {int? wrapWidth}) {};
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

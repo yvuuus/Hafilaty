@@ -6,7 +6,6 @@ import "package:geolocator/geolocator.dart";
 import "package:google_maps_flutter/google_maps_flutter.dart";
 import 'package:location/location.dart' as loc;
 import 'package:geocoder2/geocoder2.dart';
-import 'package:geocoding/geocoding.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -21,8 +20,7 @@ class _MainScreenState extends State<MainScreen> {
   final Completer<GoogleMapController> _controllerGoogleMap = Completer();
 
   static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(
-        37.42796133580664, -122.085749655962), // Position initiale (exemple)
+    target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 15,
   );
 
@@ -74,32 +72,48 @@ class _MainScreenState extends State<MainScreen> {
       pickLocation = LatLng(position.latitude, position.longitude);
     });
 
-    // Déplacer la caméra sur la position de l'utilisateur
+    print("User position: ${position.latitude}, ${position.longitude}");
+
+    // Déplacer la caméra
     GoogleMapController controller = await _controllerGoogleMap.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
       target: LatLng(position.latitude, position.longitude),
       zoom: 14.0,
     )));
 
+    // Récupérer l'adresse
     String humanReadableAddress =
         await AssistantsMethods.searchAddressForGeographicCordinates(
             position, context);
-    print("this is our address =" + humanReadableAddress);
+
+    setState(() {
+      _address =
+          humanReadableAddress; // Mise à jour de l'adresse pour l'affichage
+    });
+
+    print("this is our address = $humanReadableAddress");
   }
 
-  //fonction pour l address
-  getAddressFromLatlng() async {
-    try {
-      GeoData data = await Geocoder2.getDataFromCoordinates(
-          latitude: pickLocation!.latitude,
-          longitude: pickLocation!.longitude,
-          googleMapApiKey: mapkey);
+  //fonction pour l'adresse
+  Future<void> getAddressFromLatlng() async {
+    if (userCurrentPosition != null) {
+      try {
+        // Utilisation de l'API géocode de Google pour obtenir l'adresse la plus complète
+        String humanReadableAddress =
+            await AssistantsMethods.searchAddressForGeographicCordinates(
+                userCurrentPosition!,
+                context); // Utiliser userCurrentPosition ici
 
-      setState(() {
-        _address = data.address;
-      });
-    } catch (e) {
-      print(e);
+        setState(() {
+          _address = humanReadableAddress;
+        });
+
+        print("Fetched address: $_address"); // Afficher dans les logs
+      } catch (e) {
+        print("Error fetching address: $e");
+      }
+    } else {
+      print("User position is null.");
     }
   }
 
@@ -156,7 +170,7 @@ class _MainScreenState extends State<MainScreen> {
             padding: EdgeInsets.only(bottom: bottomPaddingOfMap),
             onCameraMove: (CameraPosition position) {},
             onCameraIdle: () {
-              getAddressFromLatlng();
+              getAddressFromLatlng(); // Récupérer l'adresse après chaque mouvement de caméra
             },
           ),
           // Afficher un indicateur de position lorsque la position est en cours de récupération
@@ -164,7 +178,6 @@ class _MainScreenState extends State<MainScreen> {
             Center(
               child: CircularProgressIndicator(),
             ),
-
           Positioned(
             top: 40,
             right: 20,
@@ -172,13 +185,17 @@ class _MainScreenState extends State<MainScreen> {
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.black),
-                color: Colors.white,
+                color: const Color.fromARGB(255, 252, 249, 249),
               ),
               padding: EdgeInsets.all(20),
               child: Text(
                 _address ?? "Set your pickuplocation",
                 overflow: TextOverflow.visible,
                 softWrap: true,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 19, 15, 15)),
               ),
             ),
           ),
