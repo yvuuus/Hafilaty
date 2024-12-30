@@ -1,8 +1,8 @@
 // Déclaration du plugin dans la section plugins
 plugins {
-    id 'com.android.application' version '8.0.2' apply false
+    id 'com.android.application' version '8.2.1' apply false
     id 'com.google.gms.google-services' version '4.4.2' apply false  // Ajouter le plugin Firebase ici
-    classpath 'com.google.gms:google-services:4.4.2'
+    
 }
 
 allprojects {

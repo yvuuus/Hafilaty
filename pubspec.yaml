@@ -37,15 +37,18 @@ dependencies:
   cupertino_icons: ^1.0.8
   email_validator: ^3.0.0
   latlong2: ^0.9.1
-  flutter_map: ^7.0.2
-  flutter_mapbox_navigation: ^0.2.2
   permission_handler: ^11.3.1
   geolocator: ^13.0.2
-  mapbox_gl: ^0.16.0
-  mapbox_search: ^4.2.2
-  http: ^1.2.2
+  http: ^0.13.4
   flutter_typeahead: ^5.2.0
   geocoding: ^3.0.0
+  google_maps_flutter: ^2.10.0
+  geocoder2: ^1.4.0
+  flutter_geofire: ^2.0.4
+  flutter_polyline_points: ^1.0.0
+  location: ^7.0.1
+  smooth_star_rating_nsafe: ^1.0.0+1
+  animated_text_kit: ^4.2.2
 
 
 

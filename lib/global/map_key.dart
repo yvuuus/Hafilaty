@@ -1,2 +1,1 @@
-String mapkey =
-    "pk.eyJ1IjoiaGFmaWxhdHktcHJvamVjdCIsImEiOiJjbTU5bHNma3owd3BxMmxyNzY4d21yODJsIn0.-hI5FcSLnLC8FVxyny3UTA";
+String mapkey = "AIzaSyBw9HjjH6wO8RUsgCgCer2GjtsFGLAdSCo";
