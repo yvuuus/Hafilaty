@@ -1,3 +1,4 @@
+import 'package:bus_tracking_app/infoHandler/app_info.dart';
 import 'package:bus_tracking_app/screens/main_page.dart';
 import 'package:bus_tracking_app/screens/register_screen.dart';
 import 'package:bus_tracking_app/screens/login_screen.dart';
@@ -5,6 +6,7 @@ import 'package:bus_tracking_app/screens/choice_page.dart'; // Importation de ch
 import 'package:bus_tracking_app/screens/splash_page.dart';
 import 'package:bus_tracking_app/themeProvider/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   debugPrint = (String? message, {int? wrapWidth}) {};
@@ -16,13 +18,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      themeMode: ThemeMode.system,
-      theme: MyThemes.lightTheme,
-      darkTheme: MyThemes.darkTheme,
-      debugShowCheckedModeBanner: false,
-      home: SplashScreen(), // Définition de la page d'accueil
+    return ChangeNotifierProvider(
+      create: (context) => AppInfo(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        themeMode: ThemeMode.system,
+        theme: MyThemes.lightTheme,
+        darkTheme: MyThemes.darkTheme,
+        debugShowCheckedModeBanner: false,
+        home: SplashScreen(), // Définition de la page d'accueil
+      ),
     );
   }
 }

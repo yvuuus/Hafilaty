@@ -1,11 +1,17 @@
+// ignore_for_file: use_build_context_synchronously
+
 import "dart:async";
 import "package:bus_tracking_app/Assistants/assistants_methods.dart";
 import "package:bus_tracking_app/global/map_key.dart";
+import "package:bus_tracking_app/infoHandler/app_info.dart";
+import "package:bus_tracking_app/models/directions.dart";
+import "package:bus_tracking_app/screens/search_places_screen.dart";
 import "package:flutter/material.dart";
 import "package:geolocator/geolocator.dart";
 import "package:google_maps_flutter/google_maps_flutter.dart";
 import 'package:location/location.dart' as loc;
 import 'package:geocoder2/geocoder2.dart';
+import "package:provider/provider.dart";
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -18,6 +24,8 @@ class _MainScreenState extends State<MainScreen> {
   LatLng? pickLocation;
   loc.Location location = loc.Location();
   final Completer<GoogleMapController> _controllerGoogleMap = Completer();
+
+  bool openNavigationDrawer = false; // Ajouter ceci au début de votre classe
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
@@ -70,6 +78,14 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       userCurrentPosition = position;
       pickLocation = LatLng(position.latitude, position.longitude);
+
+      // Ajouter le marqueur rouge statique à la position de l'utilisateur
+      markerset.add(Marker(
+        markerId: MarkerId("userLocation"),
+        position: pickLocation!,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        infoWindow: InfoWindow(title: "You are here"),
+      ));
     });
 
     print("User position: ${position.latitude}, ${position.longitude}");
@@ -94,7 +110,7 @@ class _MainScreenState extends State<MainScreen> {
     print("this is our address = $humanReadableAddress");
   }
 
-  //fonction pour l'adresse
+  // Fonction pour récupérer l'adresse en fonction des coordonnées lat/long
   Future<void> getAddressFromLatlng() async {
     if (userCurrentPosition != null) {
       try {
@@ -105,7 +121,14 @@ class _MainScreenState extends State<MainScreen> {
                 context); // Utiliser userCurrentPosition ici
 
         setState(() {
-          _address = humanReadableAddress;
+          Directions userPickUpAddress = Directions(
+            locationLatitude: pickLocation!.latitude,
+            locationLongitude: pickLocation!.longitude,
+            locationName: humanReadableAddress,
+          );
+          Provider.of<AppInfo>(context, listen: false)
+              .updatePickUpLocationAddress(userPickUpAddress);
+          // _address = humanReadableAddress;
         });
 
         print("Fetched address: $_address"); // Afficher dans les logs
@@ -157,20 +180,34 @@ class _MainScreenState extends State<MainScreen> {
           GoogleMap(
             mapType: MapType.normal,
             initialCameraPosition: _kGooglePlex,
-            onMapCreated: (GoogleMapController controller) async {
-              await Future.delayed(Duration(milliseconds: 300));
-              _controllerGoogleMap.complete(controller);
-            },
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
+            myLocationEnabled: false, // Désactive le marqueur par défaut
+            zoomGesturesEnabled: true,
             zoomControlsEnabled: true,
             markers: markerset,
             circles: circleset,
             polylines: polylineset,
             padding: EdgeInsets.only(bottom: bottomPaddingOfMap),
-            onCameraMove: (CameraPosition position) {},
+
+            onMapCreated: (GoogleMapController controller) {
+              _controllerGoogleMap.complete(controller);
+              newGoogleMapController = controller;
+
+              setState(() {
+                bottomPaddingOfMap = 200;
+              });
+              _getUserLocation();
+            },
+
+            onCameraMove: (CameraPosition? position) {
+              if (pickLocation != position!.target) {
+                setState(() {
+                  pickLocation = position.target;
+                });
+              }
+            },
+
             onCameraIdle: () {
-              getAddressFromLatlng(); // Récupérer l'adresse après chaque mouvement de caméra
+              getAddressFromLatlng(); // Récupérer l'adresse après chaque mouvement de la caméra
             },
           ),
           // Afficher un indicateur de position lorsque la position est en cours de récupération
@@ -178,27 +215,169 @@ class _MainScreenState extends State<MainScreen> {
             Center(
               child: CircularProgressIndicator(),
             ),
+
+          //Ui for searching location
           Positioned(
-            top: 40,
-            right: 20,
-            left: 20,
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                color: const Color.fromARGB(255, 252, 249, 249),
-              ),
-              padding: EdgeInsets.all(20),
-              child: Text(
-                _address ?? "Set your pickuplocation",
-                overflow: TextOverflow.visible,
-                softWrap: true,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 19, 15, 15)),
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(20, 50, 20, 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(5),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.location_on_outlined,
+                                        color: Colors.blue),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "from ",
+                                          style: TextStyle(
+                                            color: Colors.blue,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                            Provider.of<AppInfo>(context)
+                                                        .userPickUpLocation !=
+                                                    null
+                                                ? Provider.of<AppInfo>(context)
+                                                    .userPickUpLocation!
+                                                    .locationName!
+                                                    .substring(0, 31)
+                                                : "No Address found",
+                                            style: const TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 14))
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Divider(
+                                height: 1,
+                                thickness: 2,
+                                color: Colors.blue,
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(5),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    //go to search places screen
+                                    var responseFromSearchScreen =
+                                        await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (c) =>
+                                                    SearchPlacesScreen()));
+                                    if (responseFromSearchScreen ==
+                                        "obtainedDropoff ") {
+                                      setState(() {
+                                        openNavigationDrawer = false;
+                                      });
+                                    }
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.location_on_outlined,
+                                          color: Colors.blue),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "To",
+                                            style: TextStyle(
+                                              color: Colors.blue,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            Provider.of<AppInfo>(context)
+                                                        .userDropOffLocation !=
+                                                    null
+                                                ? Provider.of<AppInfo>(context)
+                                                    .userDropOffLocation!
+                                                    .locationName!
+                                                : "Where to?",
+                                            style: const TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 14),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
               ),
             ),
-          ),
+          )
+          //Positioned(
+          // top: 40,
+          //right: 20,
+          //left: 20,
+          //child: Container(
+          // decoration: BoxDecoration(
+          //  border: Border.all(color: Colors.black),
+          //  color: const Color.fromARGB(255, 252, 249, 249),
+          //),
+          //padding: EdgeInsets.all(20),
+          //child: Text(
+          // _address != null
+          //   ? (_address!.length > 24
+          //       ? _address!.substring(0, 24) + "..."
+          //      : _address!)
+          // : "Not Getting Address ",
+          // overflow: TextOverflow.visible,
+          // softWrap: true,
+          //style: TextStyle(
+          //    fontSize: 16,
+          //    fontWeight: FontWeight.bold,
+          //    color: Color.fromARGB(255, 19, 15, 15)),
+          // ),
+          //),
+          // ),
         ],
       ),
     );

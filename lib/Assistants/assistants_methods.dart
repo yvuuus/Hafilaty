@@ -1,7 +1,9 @@
-import "package:bus_tracking_app/Assistants/request_assistant.dart";
-import "package:bus_tracking_app/global/map_key.dart";
-import "package:flutter/material.dart";
-import "package:geolocator/geolocator.dart";
+import 'package:bus_tracking_app/Assistants/request_assistant.dart';
+import 'package:bus_tracking_app/global/map_key.dart';
+import 'package:bus_tracking_app/infoHandler/app_info.dart';
+import 'package:bus_tracking_app/models/directions.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
 class AssistantsMethods {
   static Future<String> searchAddressForGeographicCordinates(
@@ -19,9 +21,7 @@ class AssistantsMethods {
       var addressComponents =
           requestResponse["results"][0]["address_components"];
 
-      // Extraire une adresse complète si possible
       if (addressComponents != null && addressComponents.isNotEmpty) {
-        // Vous pouvez ici formater l'adresse en fonction de vos besoins
         humanReadableAddress = addressComponents
             .map((component) => component["long_name"])
             .join(", ");
@@ -31,6 +31,17 @@ class AssistantsMethods {
       }
 
       print("Address found: $humanReadableAddress");
+
+      // Créer un objet Directions
+      Directions userPickUpAddress = Directions(
+        locationLatitude: position.latitude,
+        locationLongitude: position.longitude,
+        locationName: humanReadableAddress,
+      );
+
+      // Mettre à jour l'adresse de ramassage
+      Provider.of<AppInfo>(context, listen: false)
+          .updatePickUpLocationAddress(userPickUpAddress);
     } else {
       print("No results found in the API response.");
       humanReadableAddress = "Address not found";
