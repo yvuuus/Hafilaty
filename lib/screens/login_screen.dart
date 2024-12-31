@@ -2,7 +2,6 @@ import 'package:bus_tracking_app/main.dart';
 import 'package:bus_tracking_app/screens/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:bus_tracking_app/screens/register_screen.dart';
-import 'package:bus_tracking_app/screens/map_screen.dart'; // Importez MapScreen ici
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

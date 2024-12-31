@@ -1,7 +1,6 @@
 import "package:bus_tracking_app/Assistants/request_assistant.dart";
 import "package:bus_tracking_app/global/map_key.dart";
 import "package:bus_tracking_app/models/predicted_places.dart";
-import "package:bus_tracking_app/screens/main_page.dart";
 import "package:bus_tracking_app/widgets/place_prediction_tile.dart";
 import "package:flutter/material.dart";
 
@@ -128,21 +127,6 @@ class _SearchPlacesScreenState extends State<SearchPlacesScreen> {
                     itemBuilder: (context, index) {
                       return PlacePredictionTileDesign(
                         predictedPlace: placesPredictedList[index],
-                        onTap: () {
-                          // Récupérer l'emplacement sélectionné
-                          PredictedPlaces selectedPlace =
-                              placesPredictedList[index];
-
-                          // Naviguer vers MainScreen en passant les détails de l'emplacement
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MainScreen(
-                                  // Passer l'emplacement sélectionné
-                                  ),
-                            ),
-                          );
-                        },
                       );
                     },
                     separatorBuilder: (BuildContext context, int index) {

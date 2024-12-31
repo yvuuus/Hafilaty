@@ -11,9 +11,7 @@ import 'package:provider/provider.dart';
 class PlacePredictionTileDesign extends StatefulWidget {
   final PredictedPlaces? predictedPlace;
 
-  PlacePredictionTileDesign(
-      {Key? key, this.predictedPlace, required Null Function() onTap})
-      : super(key: key);
+  PlacePredictionTileDesign({Key? key, this.predictedPlace}) : super(key: key);
 
   @override
   State<PlacePredictionTileDesign> createState() =>
@@ -25,7 +23,7 @@ class _PlacePredictionTileDesignState extends State<PlacePredictionTileDesign> {
     showDialog(
         context: context,
         builder: (BuildContext context) => ProgressDialog(
-              message: "Setting Dropp-off. please whait ",
+              message: "Setting Drop-off. Please wait...",
             ));
 
     String placeDirectionDetailsUrl =
@@ -36,24 +34,26 @@ class _PlacePredictionTileDesignState extends State<PlacePredictionTileDesign> {
 
     Navigator.pop(context);
 
-    if (responseapi == "error occured , failed no response") {
+    if (responseapi == "error occurred, failed no response") {
       return;
     }
 
-    if (responseapi["status"] == "Ok") {
+    if (responseapi["status"] == "OK") {
       Directions directions = Directions();
       directions.locationName = responseapi["result"]["name"];
       directions.locationId = placeId;
       directions.locationLatitude =
           responseapi["result"]["geometry"]["location"]["lat"];
-
       directions.locationLongitude =
           responseapi["result"]["geometry"]["location"]["lng"];
 
+      // Mise à jour correcte du drop-off dans AppInfo
       Provider.of<AppInfo>(context, listen: false)
-          .updateDropOffLocationAddress(userDropOffAddress as Directions);
+          .updateDropOffLocationAddress(directions);
 
       setState(() {
+        // Mise à jour de l'adresse drop-off
+        // Assurez-vous que userDropOffAddress est bien défini dans votre classe
         userDropOffAddress = directions.locationName!;
       });
 
@@ -65,8 +65,8 @@ class _PlacePredictionTileDesignState extends State<PlacePredictionTileDesign> {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
+        // Appel de la méthode pour obtenir les détails de l'adresse
         getPlaceDirectionDetails(widget.predictedPlace!.place_id, context);
-        // Action à exécuter lors du clic
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.white,
@@ -84,7 +84,6 @@ class _PlacePredictionTileDesignState extends State<PlacePredictionTileDesign> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Afficher le texte principal s'il existe
                   Text(
                     widget.predictedPlace!.main_text!,
                     overflow: TextOverflow.ellipsis,
@@ -93,7 +92,6 @@ class _PlacePredictionTileDesignState extends State<PlacePredictionTileDesign> {
                       color: Color(0xFFE1BEE7),
                     ),
                   ),
-                  // Afficher le texte secondaire s'il existe
                   Text(
                     widget.predictedPlace!.secondary_text!,
                     overflow: TextOverflow.ellipsis,
