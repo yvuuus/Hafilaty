@@ -2,6 +2,7 @@
 
 import "dart:async";
 import "package:bus_tracking_app/Assistants/assistants_methods.dart";
+import "package:bus_tracking_app/Assistants/geofire_assistant.dart";
 import "package:bus_tracking_app/global/global.dart";
 import "package:bus_tracking_app/global/map_key.dart";
 import "package:bus_tracking_app/infoHandler/app_info.dart";
@@ -50,6 +51,10 @@ class _MainScreenState extends State<MainScreen> {
   Set<Circle> circleset = {};
   Set<Polyline> polyLineSet = {};
   List<LatLng> pLineCoordinatedList = [];
+
+  bool activeNearbyDriverKeysLoaded = false;
+  bool requestPositionInfo = true;
+  BitmapDescriptor? activeNearbyIcon;
 
   String? _address;
 
@@ -222,60 +227,104 @@ class _MainScreenState extends State<MainScreen> {
     String humanReadableAddress =
         await AssistantsMethods.searchAddressForGeographicCordinates(
             userCurrentPosition!, context);
-    //initializeGeoFireListener();
+    initializeGeoFireListener();
   }
 
-  /*initializeGeoFireListener() {
-
+  initializeGeoFireListener() {
     Geofire.initialize("activeDrivers");
-    Geofire.queryAtLocation(userCurrentPosition!.latitude, userCurrentPosition!.longitude, 50)!
-    .listen((map){
+    Geofire.queryAtLocation(
+            userCurrentPosition!.latitude, userCurrentPosition!.longitude, 50)!
+        .listen((map) {
       print(map);
 
-      if(map!= null){
-        var callBack= map["callBack"];
+      if (map != null) {
+        var callBack = map["callBack"];
 
-        switch(callBack){
+        switch (callBack) {
           //whenever a driver becomes active or online
           case Geofire.onKeyEntered:
-          ActiveNearbyAvailableDrivers activeNearbyAvailableDrivers = ActiveNearbyAvailableDrivers();
-        
-        activeNearbyAvailableDrivers.locationLatitude=map["latitude"]
-        
+            ActiveNearbyAvailableDrivers activeNearbyAvailableDrivers =
+                ActiveNearbyAvailableDrivers();
+
+            activeNearbyAvailableDrivers.locationLatitude = map["latitude"];
+            activeNearbyAvailableDrivers.locationLongitude = map["longitude"];
+            activeNearbyAvailableDrivers.driverId = map["key"];
+
+            GeofireAssistant.activeNearByAvailableDriversList
+                .add(activeNearbyAvailableDrivers);
+
+            if (activeNearbyDriverKeysLoaded == true) {
+              displayActiveDriversOnUsersMap();
+            }
+            break;
+
+          //whenever any driver become non-active/online
+          case Geofire.onKeyExited:
+            GeofireAssistant.deleteOffLineDriversFRomList(map["Key"]);
+            displayActiveDriversOnUsersMap();
+            break;
+
+          //whenever drivers moves update driver location
+          case Geofire.onKeyMoved:
+            ActiveNearbyAvailableDrivers activeNearbyAvailableDrivers =
+                ActiveNearbyAvailableDrivers();
+            activeNearbyAvailableDrivers.locationLatitude = map["latitude"];
+            activeNearbyAvailableDrivers.locationLongitude = map["longitude"];
+            activeNearbyAvailableDrivers.driverId = map["key"];
+
+            GeofireAssistant.updateActiveNearByAvailableDriverLocation(
+                activeNearbyAvailableDrivers);
+
+            displayActiveDriversOnUsersMap();
+            break;
+
+          //display thos online drivers on users map
+          case Geofire.onGeoQueryReady:
+            activeNearbyDriverKeysLoaded = true;
+            displayActiveDriversOnUsersMap();
+            break;
         }
-
       }
+
+      setState(() {});
     });
-  }*/
+  }
 
-  // Fonction pour récupérer l'adresse en fonction des coordonnées lat/long
-  /*Future<void> getAddressFromLatlng() async {
-    if (userCurrentPosition != null) {
-      try {
-        GeoData data = await Geocoder2.getDataFromCoordinates(
-            latitude: pickLocation!.latitude,
-            longitude: pickLocation!.longitude,
-            googleMapApiKey: mapkey);
+  displayActiveDriversOnUsersMap() {
+    setState(() {
+      markerset.clear();
+      circleset.clear();
+      Set<Marker> driversMarkerSet = Set<Marker>();
+      for (ActiveNearbyAvailableDrivers eachDriver
+          in GeofireAssistant.activeNearByAvailableDriversList) {
+        LatLng eachDriveActivePosition =
+            LatLng(eachDriver.locationLatitude!, eachDriver.locationLongitude!);
 
-        setState(() {
-          Directions userPickUpAddress = Directions();
-          userPickUpAddress.locationLatitude = pickLocation!.latitude;
-          userPickUpAddress.locationLongitude = pickLocation!.longitude;
-          userPickUpAddress.locationName = data.address;
+        Marker marker = Marker(
+          markerId: MarkerId("driver 1"),
+          position: eachDriveActivePosition,
+          icon: activeNearbyIcon!,
+          rotation: 360,
+        );
 
-          Provider.of<AppInfo>(context, listen: false)
-              .updatePickUpLocationAddress(userPickUpAddress);
-          // _address = humanReadableAddress;
-        });
-
-        print("Fetched address: $_address"); // Afficher dans les logs
-      } catch (e) {
-        print("Error fetching address: $e");
+        driversMarkerSet.add(marker);
       }
-    } else {
-      print("User position is null.");
+      setState(() {
+        markerset = driversMarkerSet;
+      });
+    });
+  }
+
+  createActiveNearByDriverIconMarker() {
+    if (activeNearbyIcon == null) {
+      ImageConfiguration imageConfiguration =
+          createLocalImageConfiguration(context, size: Size(2, 2));
+      BitmapDescriptor.fromAssetImage(imageConfiguration, "images/car.png")
+          .then((value) {
+        activeNearbyIcon = value;
+      });
     }
-  }*/
+  }
 
   // Afficher une boîte de dialogue pour demander l'activation de la localisation
   void _showLocationPermissionDialog() {
@@ -301,6 +350,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    createActiveNearByDriverIconMarker();
     return Scaffold(
       //key: _scaffoldState,
       //drawer: DrawerScreen(),
