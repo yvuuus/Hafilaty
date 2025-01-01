@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, sort_child_properties_last
 
 import "dart:async";
 import "package:bus_tracking_app/Assistants/assistants_methods.dart";
@@ -6,6 +6,7 @@ import "package:bus_tracking_app/global/global.dart";
 import "package:bus_tracking_app/global/map_key.dart";
 import "package:bus_tracking_app/infoHandler/app_info.dart";
 import "package:bus_tracking_app/models/directions.dart";
+import "package:bus_tracking_app/screens/precise_pickup_location.dart";
 import "package:bus_tracking_app/screens/search_places_screen.dart";
 import "package:bus_tracking_app/widgets/progress_dialog.dart";
 import "package:flutter/material.dart";
@@ -26,14 +27,14 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   LatLng? pickLocation;
   loc.Location location = loc.Location();
-  final Completer<GoogleMapController> _controllerGoogleMap = Completer();
-
   bool openNavigationDrawer = false; // Ajouter ceci au début de votre classe
 
+  final Completer<GoogleMapController> _controllerGoogleMap = Completer();
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 15,
   );
+  GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
 
   GoogleMapController? newGoogleMapController;
 
@@ -47,7 +48,7 @@ class _MainScreenState extends State<MainScreen> {
   Set<Polyline> polyLineSet = {};
   List<LatLng> pLineCoordinatedList = [];
 
-  String? _address = "";
+  String? _address;
 
   @override
   void initState() {
@@ -156,6 +157,50 @@ class _MainScreenState extends State<MainScreen> {
 
     newGoogleMapController!
         .animateCamera(CameraUpdate.newLatLngBounds(boundsLatLng, 65));
+
+    Marker destinationMarker = Marker(
+      markerId: MarkerId("destinationId"),
+      infoWindow: InfoWindow(
+          title: destinationPosition.locationName, snippet: "Destination"),
+      position: destinationLatlng,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    );
+
+    Marker originMarker = Marker(
+      markerId: MarkerId("originId"),
+      infoWindow:
+          InfoWindow(title: originPosition.locationName, snippet: "Origin"),
+      position: originLatlng,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    );
+
+    setState(() {
+      markerset.add(originMarker);
+      markerset.add(destinationMarker);
+    });
+
+    Circle originCircle = Circle(
+      circleId: CircleId("originId"),
+      fillColor: Colors.blue,
+      radius: 12,
+      strokeWidth: 3,
+      strokeColor: Colors.white,
+      center: originLatlng,
+    );
+
+    Circle destinationCircle = Circle(
+      circleId: CircleId("destinationId"),
+      fillColor: Colors.blue,
+      radius: 12,
+      strokeWidth: 3,
+      strokeColor: Colors.white,
+      center: destinationLatlng,
+    );
+
+    setState(() {
+      circleset.add(originCircle);
+      circleset.add(destinationCircle);
+    });
   }
 
   // Récupérer la position actuelle de l'utilisateur
@@ -165,14 +210,6 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       userCurrentPosition = position;
       pickLocation = LatLng(position.latitude, position.longitude);
-
-      // Ajouter le marqueur rouge statique à la position de l'utilisateur
-      markerset.add(Marker(
-        markerId: MarkerId("userLocation"),
-        position: pickLocation!,
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-        infoWindow: InfoWindow(title: "You are here"),
-      ));
     });
 
     print("User position: ${position.latitude}, ${position.longitude}");
@@ -193,26 +230,23 @@ class _MainScreenState extends State<MainScreen> {
       _address =
           humanReadableAddress; // Mise à jour de l'adresse pour l'affichage
     });
-
-    print("this is our address = $humanReadableAddress");
   }
 
   // Fonction pour récupérer l'adresse en fonction des coordonnées lat/long
-  Future<void> getAddressFromLatlng() async {
+  /*Future<void> getAddressFromLatlng() async {
     if (userCurrentPosition != null) {
       try {
-        // Utilisation de l'API géocode de Google pour obtenir l'adresse la plus complète
-        String humanReadableAddress =
-            await AssistantsMethods.searchAddressForGeographicCordinates(
-                userCurrentPosition!,
-                context); // Utiliser userCurrentPosition ici
+        GeoData data = await Geocoder2.getDataFromCoordinates(
+            latitude: pickLocation!.latitude,
+            longitude: pickLocation!.longitude,
+            googleMapApiKey: mapkey);
 
         setState(() {
-          Directions userPickUpAddress = Directions(
-            locationLatitude: pickLocation!.latitude,
-            locationLongitude: pickLocation!.longitude,
-            locationName: humanReadableAddress,
-          );
+          Directions userPickUpAddress = Directions();
+          userPickUpAddress.locationLatitude = pickLocation!.latitude;
+          userPickUpAddress.locationLongitude = pickLocation!.longitude;
+          userPickUpAddress.locationName = data.address;
+
           Provider.of<AppInfo>(context, listen: false)
               .updatePickUpLocationAddress(userPickUpAddress);
           // _address = humanReadableAddress;
@@ -225,7 +259,7 @@ class _MainScreenState extends State<MainScreen> {
     } else {
       print("User position is null.");
     }
-  }
+  }*/
 
   // Afficher une boîte de dialogue pour demander l'activation de la localisation
   void _showLocationPermissionDialog() {
@@ -253,7 +287,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFE1BEE7),
+        backgroundColor: Colors.blue,
         title: Text('Map Screen'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -267,7 +301,7 @@ class _MainScreenState extends State<MainScreen> {
           GoogleMap(
             mapType: MapType.normal,
             initialCameraPosition: _kGooglePlex,
-            myLocationEnabled: false, // Désactive le marqueur par défaut
+            myLocationEnabled: true, // Désactive le marqueur par défaut
             zoomGesturesEnabled: true,
             zoomControlsEnabled: true,
             markers: markerset,
@@ -293,9 +327,9 @@ class _MainScreenState extends State<MainScreen> {
               }
             },
 
-            onCameraIdle: () {
+            /* onCameraIdle: () {
               getAddressFromLatlng(); // Récupérer l'adresse après chaque mouvement de la caméra
-            },
+            },*/
           ),
           // Afficher un indicateur de position lorsque la position est en cours de récupération
           if (userCurrentPosition == null)
@@ -352,9 +386,10 @@ class _MainScreenState extends State<MainScreen> {
                                                         .userPickUpLocation !=
                                                     null
                                                 ? Provider.of<AppInfo>(context)
-                                                    .userPickUpLocation!
-                                                    .locationName!
-                                                    .substring(0, 31)
+                                                        .userPickUpLocation!
+                                                        .locationName!
+                                                        .substring(0, 24) +
+                                                    "..."
                                                 : "No Address found",
                                             style: const TextStyle(
                                                 color: Colors.grey,
@@ -434,6 +469,53 @@ class _MainScreenState extends State<MainScreen> {
                               ),
                             ],
                           ),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (c) =>
+                                            PrecisePickupLocation()));
+                              },
+                              child: Text(
+                                "Change PickUp",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  textStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  )),
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            ElevatedButton(
+                              onPressed: () {},
+                              child: Text(
+                                "Request a Ride",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  textStyle: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  )),
+                            ),
+                          ],
                         )
                       ],
                     ),
