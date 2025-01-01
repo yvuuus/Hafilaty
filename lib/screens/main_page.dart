@@ -2,16 +2,19 @@
 
 import "dart:async";
 import "package:bus_tracking_app/Assistants/assistants_methods.dart";
+import "package:bus_tracking_app/global/global.dart";
 import "package:bus_tracking_app/global/map_key.dart";
 import "package:bus_tracking_app/infoHandler/app_info.dart";
 import "package:bus_tracking_app/models/directions.dart";
 import "package:bus_tracking_app/screens/search_places_screen.dart";
+import "package:bus_tracking_app/widgets/progress_dialog.dart";
 import "package:flutter/material.dart";
 import "package:geolocator/geolocator.dart";
 import "package:google_maps_flutter/google_maps_flutter.dart";
 import 'package:location/location.dart' as loc;
 import 'package:geocoder2/geocoder2.dart';
 import "package:provider/provider.dart";
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -41,7 +44,8 @@ class _MainScreenState extends State<MainScreen> {
 
   Set<Marker> markerset = {};
   Set<Circle> circleset = {};
-  Set<Polyline> polylineset = {};
+  Set<Polyline> polyLineSet = {};
+  List<LatLng> pLineCoordinatedList = [];
 
   String? _address = "";
 
@@ -69,6 +73,89 @@ class _MainScreenState extends State<MainScreen> {
     } else {
       _getUserLocation();
     }
+  }
+
+  Future<void> drawPolylineFromOriginToDestination() async {
+    var originPosition =
+        Provider.of<AppInfo>(context, listen: false).userPickUpLocation;
+    var destinationPosition =
+        Provider.of<AppInfo>(context, listen: false).userDropOffLocation;
+
+    var originLatlng = LatLng(
+        originPosition!.locationLatitude!, originPosition.locationLongitude!);
+
+    var destinationLatlng = LatLng(destinationPosition!.locationLatitude!,
+        destinationPosition.locationLongitude!);
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => ProgressDialog(
+              message: "please wait ...",
+            ));
+
+    var directionDetailsInfo =
+        await AssistantsMethods.obtainOriginToDestinationDirectionDetails(
+            originLatlng, destinationLatlng);
+
+    setState(() {
+      tripDirectionDetailsInfo = directionDetailsInfo;
+    });
+    Navigator.pop(context);
+
+    PolylinePoints pPoints = PolylinePoints();
+
+    List<PointLatLng> decodePolyLinePointsResultList =
+        pPoints.decodePolyline(directionDetailsInfo.e_points!);
+
+    pLineCoordinatedList.clear();
+
+    if (decodePolyLinePointsResultList.isNotEmpty) {
+      decodePolyLinePointsResultList.forEach((PointLatLng pointLatLng) {
+        pLineCoordinatedList
+            .add(LatLng(pointLatLng.latitude, pointLatLng.longitude));
+      });
+    }
+
+    polyLineSet.clear();
+
+    setState(() {
+      Polyline polyline = Polyline(
+        color: Colors.blue,
+        polylineId: PolylineId("PolylineId"),
+        jointType: JointType.round,
+        points: pLineCoordinatedList,
+        startCap: Cap.roundCap,
+        endCap: Cap.roundCap,
+        geodesic: true,
+        width: 5,
+      );
+
+      polyLineSet.add(polyline);
+    });
+
+    LatLngBounds boundsLatLng;
+
+    if (originLatlng.latitude > destinationLatlng.latitude &&
+        originLatlng.longitude > destinationLatlng.longitude) {
+      boundsLatLng =
+          LatLngBounds(southwest: destinationLatlng, northeast: originLatlng);
+    } else if (originLatlng.longitude > destinationLatlng.longitude) {
+      boundsLatLng = LatLngBounds(
+          southwest: LatLng(originLatlng.latitude, destinationLatlng.longitude),
+          northeast:
+              LatLng(destinationLatlng.latitude, originLatlng.longitude));
+    } else if (originLatlng.latitude > destinationLatlng.latitude) {
+      boundsLatLng = LatLngBounds(
+          southwest: LatLng(destinationLatlng.latitude, originLatlng.longitude),
+          northeast:
+              LatLng(originLatlng.latitude, destinationLatlng.longitude));
+    } else {
+      boundsLatLng =
+          LatLngBounds(southwest: originLatlng, northeast: destinationLatlng);
+    }
+
+    newGoogleMapController!
+        .animateCamera(CameraUpdate.newLatLngBounds(boundsLatLng, 65));
   }
 
   // Récupérer la position actuelle de l'utilisateur
@@ -185,7 +272,7 @@ class _MainScreenState extends State<MainScreen> {
             zoomControlsEnabled: true,
             markers: markerset,
             circles: circleset,
-            polylines: polylineset,
+            polylines: polyLineSet,
             padding: EdgeInsets.only(bottom: bottomPaddingOfMap),
 
             onMapCreated: (GoogleMapController controller) {
@@ -305,6 +392,8 @@ class _MainScreenState extends State<MainScreen> {
                                         openNavigationDrawer = false;
                                       });
                                     }
+
+                                    await drawPolylineFromOriginToDestination();
                                   },
                                   child: Row(
                                     children: [
