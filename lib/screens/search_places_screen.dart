@@ -49,7 +49,7 @@ class _SearchPlacesScreenState extends State<SearchPlacesScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Color(0xFFE1BEE7),
+          backgroundColor: Color.fromARGB(255, 138, 17, 194),
           leading: GestureDetector(
             onTap: () {
               Navigator.pop(context);
@@ -66,7 +66,7 @@ class _SearchPlacesScreenState extends State<SearchPlacesScreen> {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: Color(0xFFE1BEE7),
+                color: Color.fromARGB(255, 138, 17, 194),
                 boxShadow: [
                   BoxShadow(
                       color: Colors.white54,
@@ -132,7 +132,7 @@ class _SearchPlacesScreenState extends State<SearchPlacesScreen> {
                     separatorBuilder: (BuildContext context, int index) {
                       return Divider(
                         height: 0,
-                        color: Color(0xFFE1BEE7),
+                        color: Color.fromARGB(255, 138, 17, 194),
                         thickness: 0,
                       );
                     },

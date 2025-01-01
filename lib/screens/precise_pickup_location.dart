@@ -120,6 +120,11 @@ class _PrecisePickupLocationState extends State<PrecisePickupLocation> {
               getAddressFromLatlng(); // Récupérer l'adresse après chaque mouvement de la caméra
             },
           ),
+          // Afficher un indicateur de position lorsque la position est en cours de récupération
+          if (userCurrentPosition == null)
+            Center(
+              child: CircularProgressIndicator(),
+            ),
           Align(
             alignment: Alignment.center,
             child: Padding(
@@ -167,7 +172,7 @@ class _PrecisePickupLocationState extends State<PrecisePickupLocation> {
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Color.fromARGB(255, 138, 17, 194),
                     textStyle: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,

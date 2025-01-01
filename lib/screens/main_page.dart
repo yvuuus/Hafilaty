@@ -5,11 +5,14 @@ import "package:bus_tracking_app/Assistants/assistants_methods.dart";
 import "package:bus_tracking_app/global/global.dart";
 import "package:bus_tracking_app/global/map_key.dart";
 import "package:bus_tracking_app/infoHandler/app_info.dart";
+import "package:bus_tracking_app/models/active_nearby_available_drivers.dart";
 import "package:bus_tracking_app/models/directions.dart";
+import "package:bus_tracking_app/screens/drawer_screen.dart";
 import "package:bus_tracking_app/screens/precise_pickup_location.dart";
 import "package:bus_tracking_app/screens/search_places_screen.dart";
 import "package:bus_tracking_app/widgets/progress_dialog.dart";
 import "package:flutter/material.dart";
+import "package:flutter_geofire/flutter_geofire.dart";
 import "package:geolocator/geolocator.dart";
 import "package:google_maps_flutter/google_maps_flutter.dart";
 import 'package:location/location.dart' as loc;
@@ -205,32 +208,45 @@ class _MainScreenState extends State<MainScreen> {
 
   // Récupérer la position actuelle de l'utilisateur
   Future<void> _getUserLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
+    userCurrentPosition = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    setState(() {
-      userCurrentPosition = position;
-      pickLocation = LatLng(position.latitude, position.longitude);
-    });
+    LatLng latLngPosition =
+        LatLng(userCurrentPosition!.latitude, userCurrentPosition!.longitude);
 
-    print("User position: ${position.latitude}, ${position.longitude}");
+    CameraPosition cameraPosition =
+        CameraPosition(target: latLngPosition, zoom: 16);
+    newGoogleMapController!
+        .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
-    // Déplacer la caméra
-    GoogleMapController controller = await _controllerGoogleMap.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-      target: LatLng(position.latitude, position.longitude),
-      zoom: 14.0,
-    )));
-
-    // Récupérer l'adresse
+    //userName = currentUserInfo!.name!;
     String humanReadableAddress =
         await AssistantsMethods.searchAddressForGeographicCordinates(
-            position, context);
-
-    setState(() {
-      _address =
-          humanReadableAddress; // Mise à jour de l'adresse pour l'affichage
-    });
+            userCurrentPosition!, context);
+    //initializeGeoFireListener();
   }
+
+  /*initializeGeoFireListener() {
+
+    Geofire.initialize("activeDrivers");
+    Geofire.queryAtLocation(userCurrentPosition!.latitude, userCurrentPosition!.longitude, 50)!
+    .listen((map){
+      print(map);
+
+      if(map!= null){
+        var callBack= map["callBack"];
+
+        switch(callBack){
+          //whenever a driver becomes active or online
+          case Geofire.onKeyEntered:
+          ActiveNearbyAvailableDrivers activeNearbyAvailableDrivers = ActiveNearbyAvailableDrivers();
+        
+        activeNearbyAvailableDrivers.locationLatitude=map["latitude"]
+        
+        }
+
+      }
+    });
+  }*/
 
   // Fonction pour récupérer l'adresse en fonction des coordonnées lat/long
   /*Future<void> getAddressFromLatlng() async {
@@ -286,8 +302,10 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //key: _scaffoldState,
+      //drawer: DrawerScreen(),
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Color.fromARGB(255, 138, 17, 194),
         title: Text('Map Screen'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -319,14 +337,13 @@ class _MainScreenState extends State<MainScreen> {
               _getUserLocation();
             },
 
-            onCameraMove: (CameraPosition? position) {
-              if (pickLocation != position!.target) {
-                setState(() {
-                  pickLocation = position.target;
-                });
-              }
-            },
-
+            //onCameraMove: (CameraPosition? position) {
+            // if (pickLocation != position!.target) {
+            //  setState(() {
+            //   pickLocation = position.target;
+            // });
+            //}
+            //},
             /* onCameraIdle: () {
               getAddressFromLatlng(); // Récupérer l'adresse après chaque mouvement de la caméra
             },*/
@@ -336,6 +353,26 @@ class _MainScreenState extends State<MainScreen> {
             Center(
               child: CircularProgressIndicator(),
             ),
+
+          //custom hamburger button for drawer
+          /*Positioned(
+            top: 50,
+            left: 20,
+            child: Container(
+              child: GestureDetector(
+                onTap: () {
+                  _scaffoldState.currentState!.openDrawer();
+                },
+                child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    Icons.menu,
+                    color: Colors.lightBlue,
+                  ),
+                ),
+              ),
+            ),
+          ),*/
 
           //Ui for searching location
           Positioned(
@@ -364,8 +401,10 @@ class _MainScreenState extends State<MainScreen> {
                                 padding: EdgeInsets.all(5),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.location_on_outlined,
-                                        color: Colors.blue),
+                                    Icon(
+                                      Icons.location_on_outlined,
+                                      color: Color.fromARGB(255, 138, 17, 194),
+                                    ),
                                     SizedBox(
                                       width: 10,
                                     ),
@@ -376,7 +415,8 @@ class _MainScreenState extends State<MainScreen> {
                                         Text(
                                           "from ",
                                           style: TextStyle(
-                                            color: Colors.blue,
+                                            color: Color.fromARGB(
+                                                255, 138, 17, 194),
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -405,7 +445,7 @@ class _MainScreenState extends State<MainScreen> {
                               Divider(
                                 height: 1,
                                 thickness: 2,
-                                color: Colors.blue,
+                                color: Color.fromARGB(255, 138, 17, 194),
                               ),
                               SizedBox(
                                 height: 5,
@@ -432,8 +472,11 @@ class _MainScreenState extends State<MainScreen> {
                                   },
                                   child: Row(
                                     children: [
-                                      Icon(Icons.location_on_outlined,
-                                          color: Colors.blue),
+                                      Icon(
+                                        Icons.location_on_outlined,
+                                        color:
+                                            Color.fromARGB(255, 138, 17, 194),
+                                      ),
                                       SizedBox(
                                         width: 10,
                                       ),
@@ -444,7 +487,8 @@ class _MainScreenState extends State<MainScreen> {
                                           Text(
                                             "To",
                                             style: TextStyle(
-                                              color: Colors.blue,
+                                              color: Color.fromARGB(
+                                                  255, 138, 17, 194),
                                               fontSize: 14,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -491,7 +535,8 @@ class _MainScreenState extends State<MainScreen> {
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
+                                  backgroundColor:
+                                      Color.fromARGB(255, 138, 17, 194),
                                   textStyle: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15,
@@ -503,13 +548,14 @@ class _MainScreenState extends State<MainScreen> {
                             ElevatedButton(
                               onPressed: () {},
                               child: Text(
-                                "Request a Ride",
+                                "Order Ride",
                                 style: TextStyle(
                                   color: Colors.white,
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
+                                  backgroundColor:
+                                      Color.fromARGB(255, 138, 17, 194),
                                   textStyle: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15,
