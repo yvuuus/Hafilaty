@@ -227,27 +227,39 @@ class _MainScreenState extends State<MainScreen> {
     String humanReadableAddress =
         await AssistantsMethods.searchAddressForGeographicCordinates(
             userCurrentPosition!, context);
-    //initializeGeoFireListener();
+    initializeGeoFireListener();
   }
 
-  /*initializeGeoFireListener() {
+  initializeGeoFireListener() {
     Geofire.initialize("activeDrivers");
-    Geofire.queryAtLocation(
-            userCurrentPosition!.latitude, userCurrentPosition!.longitude, 50)!
+
+    double radiusInKm = 70.0; // Rayon en kilomètres
+
+    // Affiche les coordonnées de l'utilisateur pour vérifier
+    print(
+        "User Current Position: ${userCurrentPosition!.latitude}, ${userCurrentPosition!.longitude}");
+
+    Geofire.queryAtLocation(userCurrentPosition!.latitude,
+            userCurrentPosition!.longitude, radiusInKm)!
         .listen((map) {
-      print(map);
+      print("GeoFire query result: $map");
 
       if (map != null) {
         var callBack = map["callBack"];
+        print("Callback: $callBack");
 
         switch (callBack) {
-          //whenever a driver becomes active or online
           case Geofire.onKeyEntered:
+            // Assure-toi que la structure de données est correcte
+            var driverLocation = map["location"];
             ActiveNearbyAvailableDrivers activeNearbyAvailableDrivers =
                 ActiveNearbyAvailableDrivers();
 
-            activeNearbyAvailableDrivers.locationLatitude = map["latitude"];
-            activeNearbyAvailableDrivers.locationLongitude = map["longitude"];
+            // Accède aux coordonnées sous "location"
+            activeNearbyAvailableDrivers.locationLatitude =
+                driverLocation["latitude"];
+            activeNearbyAvailableDrivers.locationLongitude =
+                driverLocation["longitude"];
             activeNearbyAvailableDrivers.driverId = map["key"];
 
             GeofireAssistant.activeNearByAvailableDriversList
@@ -258,18 +270,19 @@ class _MainScreenState extends State<MainScreen> {
             }
             break;
 
-          //whenever any driver become non-active/online
           case Geofire.onKeyExited:
-            GeofireAssistant.deleteOffLineDriversFRomList(map["Key"]);
+            GeofireAssistant.deleteOffLineDriversFRomList(map["key"]);
             displayActiveDriversOnUsersMap();
             break;
 
-          //whenever drivers moves update driver location
           case Geofire.onKeyMoved:
+            var driverLocation = map["location"];
             ActiveNearbyAvailableDrivers activeNearbyAvailableDrivers =
                 ActiveNearbyAvailableDrivers();
-            activeNearbyAvailableDrivers.locationLatitude = map["latitude"];
-            activeNearbyAvailableDrivers.locationLongitude = map["longitude"];
+            activeNearbyAvailableDrivers.locationLatitude =
+                driverLocation["latitude"];
+            activeNearbyAvailableDrivers.locationLongitude =
+                driverLocation["longitude"];
             activeNearbyAvailableDrivers.driverId = map["key"];
 
             GeofireAssistant.updateActiveNearByAvailableDriverLocation(
@@ -278,9 +291,9 @@ class _MainScreenState extends State<MainScreen> {
             displayActiveDriversOnUsersMap();
             break;
 
-          //display thos online drivers on users map
           case Geofire.onGeoQueryReady:
             activeNearbyDriverKeysLoaded = true;
+            print("Geo query is ready, no more updates expected");
             displayActiveDriversOnUsersMap();
             break;
         }
@@ -301,7 +314,7 @@ class _MainScreenState extends State<MainScreen> {
             LatLng(eachDriver.locationLatitude!, eachDriver.locationLongitude!);
 
         Marker marker = Marker(
-          markerId: MarkerId("driver 1"),
+          markerId: MarkerId(" driver 1"),
           position: eachDriveActivePosition,
           icon: activeNearbyIcon!,
           rotation: 360,
@@ -324,7 +337,7 @@ class _MainScreenState extends State<MainScreen> {
         activeNearbyIcon = value;
       });
     }
-  }*/
+  }
 
   // Afficher une boîte de dialogue pour demander l'activation de la localisation
   void _showLocationPermissionDialog() {
@@ -350,7 +363,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //createActiveNearByDriverIconMarker();
+    createActiveNearByDriverIconMarker();
     return Scaffold(
       //key: _scaffoldState,
       //drawer: DrawerScreen(),
