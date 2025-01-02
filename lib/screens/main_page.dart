@@ -227,10 +227,10 @@ class _MainScreenState extends State<MainScreen> {
     String humanReadableAddress =
         await AssistantsMethods.searchAddressForGeographicCordinates(
             userCurrentPosition!, context);
-    initializeGeoFireListener();
+    //initializeGeoFireListener();
   }
 
-  initializeGeoFireListener() {
+  /*initializeGeoFireListener() {
     Geofire.initialize("activeDrivers");
     Geofire.queryAtLocation(
             userCurrentPosition!.latitude, userCurrentPosition!.longitude, 50)!
@@ -324,7 +324,7 @@ class _MainScreenState extends State<MainScreen> {
         activeNearbyIcon = value;
       });
     }
-  }
+  }*/
 
   // Afficher une boîte de dialogue pour demander l'activation de la localisation
   void _showLocationPermissionDialog() {
@@ -350,7 +350,7 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    createActiveNearByDriverIconMarker();
+    //createActiveNearByDriverIconMarker();
     return Scaffold(
       //key: _scaffoldState,
       //drawer: DrawerScreen(),
