@@ -30,18 +30,30 @@ CREATE TABLE schedule (
     depart_address VARCHAR(255),
     destination_address VARCHAR(255),
     price VARCHAR(50),
-    notification VARCHAR(10)
+    notification VARCHAR(10),
+    duration FLOAT
 );
 
--- Insert data into the schedule table
-INSERT INTO schedule (schedule_id, schedule_name, depart, destination, depart_time, destination_time, depart_address, destination_address, price, notification) VALUES
-(1, 'oued romane baba hassen', 'oued romane', 'baba hassen', '08:00', '08:30', 'Avenue Mohamed V, Oued Romane', 'Rue Kherroubi, Baba Hassen', '45 DZD', 'off'),
-(2, 'el achour shaoula', 'el achour', 'shaoula', '09:00', '09:40', 'Boulevard Zoubir, El Achour', 'Avenue Didouche Mourad, Shaoula', '55 DZD', 'off'),
-(3, 'sebala draria', 'sebala', 'draria', '10:00', '10:40', 'Rue Ali Bouali, Sebala', 'Place Draria, Draria', '60 DZD', 'off'),
-(4, 'baba hassen oued tarfa', 'baba hassen', 'oued tarfa', '11:00', '11:45', 'Avenue Larbi Ben Mhidi, Baba Hassen', 'Rue Belouizdad, Oued Tarfa', '65 DZD', 'off'),
-(5, 'shaoula el achour', 'shaoula', 'el achour', '12:00', '12:30', 'Rue Boudraa, Shaoula', 'Boulevard Boumendjel, El Achour', '50 DZD', 'off'),
-(6, 'draria sebala', 'draria', 'sebala', '13:00', '13:35', 'Rue Boudjemâ, Draria', 'Boulevard Sidi Mhamed, Sebala', '70 DZD', 'off'),
-(7, 'oued romane el achour', 'oued romane', 'el achour', '14:00', '14:45', 'Place El Mechouar, Oued Romane', 'Rue Ben M’Hidi, El Achour', '75 DZD', 'off'),
-(8, 'sebala oued romane', 'sebala', 'oued romane', '15:00', '15:40', 'Avenue Ahmed Ben Bella, Sebala', 'Boulevard Al Amir Khaled, Oued Romane', '80 DZD', 'off'),
-(9, 'baba hassen draria', 'baba hassen', 'draria', '16:00', '16:30', 'Place Boudjemaa, Baba Hassen', 'Rue Hamlaoui, Draria', '85 DZD', 'off'),
-(10, 'oued tarfa shaoula', 'oued tarfa', 'shaoula', '17:00', '17:45', 'Avenue Hachemi, Oued Tarfa', 'Rue Khemisti, Shaoula', '90 DZD', 'off');
+
+-- Insert data into the schedule table with additional instances
+INSERT INTO schedule (schedule_id, schedule_name, depart, destination, depart_time, destination_time, depart_address, destination_address, price, notification, duration) VALUES
+(1, 'oued romane baba hassen', 'oued romane', 'baba hassen', '08:00', '08:30', 'Avenue Mohamed V, Oued Romane', 'Rue Kherroubi, Baba Hassen', '45 DZD', 'off', 10),
+(2, 'el achour shaoula', 'el achour', 'shaoula', '09:00', '09:40', 'Boulevard Zoubir, El Achour', 'Avenue Didouche Mourad, Shaoula', '55 DZD', 'off', 6.3),
+(3, 'sebala draria', 'sebala', 'draria', '10:00', '10:40', 'Rue Ali Bouali, Sebala', 'Place Draria, Draria', '60 DZD', 'off', 2.9),
+(4, 'baba hassen oued tarfa', 'baba hassen', 'oued tarfa', '11:00', '11:45', 'Avenue Larbi Ben Mhidi, Baba Hassen', 'Rue Belouizdad, Oued Tarfa', '65 DZD', 'off', 7),
+(5, 'shaoula el achour', 'shaoula', 'el achour', '12:00', '12:30', 'Rue Boudraa, Shaoula', 'Boulevard Boumendjel, El Achour', '50 DZD', 'off', 6.6),
+(6, 'draria sebala', 'draria', 'sebala', '13:00', '13:35', 'Rue Boudjemâ, Draria', 'Boulevard Sidi Mhamed, Sebala', '70 DZD', 'off', 2.9),
+(7, 'oued romane el achour', 'oued romane', 'el achour', '14:00', '14:45', 'Place El Mechouar, Oued Romane', 'Rue Ben M’Hidi, El Achour', '75 DZD', 'off', 2.1),
+(8, 'sebala oued romane', 'sebala', 'oued romane', '15:00', '15:40', 'Avenue Ahmed Ben Bella, Sebala', 'Boulevard Al Amir Khaled, Oued Romane', '80 DZD', 'off', 3.6),
+(9, 'baba hassen draria', 'baba hassen', 'draria', '16:00', '16:30', 'Place Boudjemaa, Baba Hassen', 'Rue Hamlaoui, Draria', '85 DZD', 'off', 5.4),
+(10, 'oued tarfa shaoula', 'oued tarfa', 'shaoula', '17:00', '17:45', 'Avenue Hachemi, Oued Tarfa', 'Rue Khemisti, Shaoula', '90 DZD', 'off', 7.7),
+(11, 'oued romane baba hassen', 'oued romane', 'baba hassen', '09:00', '09:30', 'Avenue Mohamed V, Oued Romane', 'Rue Kherroubi, Baba Hassen', '45 DZD', 'off', 10),
+(12, 'el achour shaoula', 'el achour', 'shaoula', '10:00', '10:40', 'Boulevard Zoubir, El Achour', 'Avenue Didouche Mourad, Shaoula', '55 DZD', 'off', 6.3),
+(13, 'sebala draria', 'sebala', 'draria', '11:00', '11:40', 'Rue Ali Bouali, Sebala', 'Place Draria, Draria', '60 DZD', 'off', 2.9),
+(14, 'baba hassen oued tarfa', 'baba hassen', 'oued tarfa', '12:00', '12:45', 'Avenue Larbi Ben Mhidi, Baba Hassen', 'Rue Belouizdad, Oued Tarfa', '65 DZD', 'off', 7),
+(15, 'shaoula el achour', 'shaoula', 'el achour', '13:00', '13:30', 'Rue Boudraa, Shaoula', 'Boulevard Boumendjel, El Achour', '50 DZD', 'off', 6.6),
+(16, 'draria sebala', 'draria', 'sebala', '14:00', '14:35', 'Rue Boudjemâ, Draria', 'Boulevard Sidi Mhamed, Sebala', '70 DZD', 'off', 2.9),
+(17, 'oued romane el achour', 'oued romane', 'el achour', '15:00', '15:45', 'Place El Mechouar, Oued Romane', 'Rue Ben M’Hidi, El Achour', '75 DZD', 'off', 2.1),
+(18, 'sebala oued romane', 'sebala', 'oued romane', '16:00', '16:40', 'Avenue Ahmed Ben Bella, Sebala', 'Boulevard Al Amir Khaled, Oued Romane', '80 DZD', 'off', 3.6),
+(19, 'baba hassen draria', 'baba hassen', 'draria', '17:00', '17:30', 'Place Boudjemaa, Baba Hassen', 'Rue Hamlaoui, Draria', '85 DZD', 'off', 5.4),
+(20, 'oued tarfa shaoula', 'oued tarfa', 'shaoula', '18:00', '18:45', 'Avenue Hachemi, Oued Tarfa', 'Rue Khemisti, Shaoula', '90 DZD', 'off', 7.7);
