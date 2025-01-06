@@ -421,26 +421,32 @@ class _MainScreenState extends State<MainScreen> {
             Center(
               child: CircularProgressIndicator(),
             ),
-
-          //custom hamburger button for drawer
-          /*Positioned(
+          // Custom profile button for drawer
+          Positioned(
             top: 50,
             left: 20,
             child: Container(
               child: GestureDetector(
                 onTap: () {
-                  _scaffoldState.currentState!.openDrawer();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (c) =>
+                              DrawerScreen())); // Naviguer vers la page du profil
                 },
                 child: CircleAvatar(
-                  backgroundColor: Colors.white,
+                  backgroundColor: Color.fromARGB(
+                      255, 138, 17, 194), // Couleur de fond du profil
+                  radius: 25, // Taille de l'avatar
                   child: Icon(
-                    Icons.menu,
-                    color: Colors.lightBlue,
+                    Icons.account_circle, // Icône de profil
+                    color: Colors.white, // Couleur de l'icône
+                    size: 30, // Taille de l'icône
                   ),
                 ),
               ),
             ),
-          ),*/
+          ),
 
           //Ui for searching location
           Positioned(

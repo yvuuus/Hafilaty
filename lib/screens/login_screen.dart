@@ -37,7 +37,6 @@ class _LoginScreenState extends State<LoginScreen> {
         Fluttertoast.showToast(msg: "error occured : \n $errorMessage ");
       });
     }
-    Fluttertoast.showToast(msg: "Not all fields are valid ");
   }
 
   @override
