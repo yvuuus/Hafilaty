@@ -100,7 +100,7 @@ class _SearchPlacesScreenState extends State<SearchPlacesScreen> {
                               },
                               decoration: InputDecoration(
                                   hintText: "Search location here ...",
-                                  fillColor: Colors.white54,
+                                  fillColor: Colors.white,
                                   filled: true,
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.only(

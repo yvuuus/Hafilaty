@@ -1,7 +1,10 @@
+import 'package:bus_tracking_app/global/global.dart';
 import 'package:bus_tracking_app/main.dart';
 import 'package:bus_tracking_app/screens/main_page.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:bus_tracking_app/screens/register_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +19,27 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>(); // Global key for the form
   bool _passwordVisible = false;
 
+  void submit() async {
+    // valdiate all the form feilds
+
+    if (_formKey.currentState!.validate()) {
+      await firebaseAuth
+          .signInWithEmailAndPassword(
+        email: emailTextEditingController.text.trim(),
+        password: passwordTextEditingController.text.trim(),
+      )
+          .then((auth) async {
+        currentUser = auth.user;
+        await Fluttertoast.showToast(msg: "successfully logged in");
+        Navigator.push(
+            context, MaterialPageRoute(builder: (c) => MainScreen()));
+      }).catchError((errorMessage) {
+        Fluttertoast.showToast(msg: "error occured : \n $errorMessage ");
+      });
+    }
+    Fluttertoast.showToast(msg: "Not all fields are valid ");
+  }
+
   @override
   Widget build(BuildContext context) {
     bool darkTheme =
@@ -28,12 +52,6 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xFFE1BEE7),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
         ),
         body: Container(
           decoration: BoxDecoration(
@@ -141,11 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () {
                               // Validate form before proceeding
                               if (_formKey.currentState?.validate() ?? false) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MainScreen()),
-                                );
+                                submit();
                               } else {
                                 // Show an error if the form is invalid
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -156,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                             },
                             child: const Text(
-                              "Sign In",
+                              "Log In",
                               style: TextStyle(
                                 fontSize: 17,
                                 color: Colors.white,
@@ -164,33 +178,18 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 20),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.purple.shade700,
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 15,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => RegisterScreen()),
-                              );
-                            },
-                            child: const Text(
-                              "Sign Up",
-                              style: TextStyle(
-                                fontSize: 17,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (c) => RegisterScreen()));
+                              },
+                              child: const Text(
+                                  "Don't have an account? Register Now",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ))),
                           const SizedBox(height: 10),
                           Image.asset(
                             darkTheme

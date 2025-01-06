@@ -1,4 +1,10 @@
+import 'package:bus_tracking_app/global/global.dart';
+import 'package:bus_tracking_app/screens/login_screen.dart';
+import 'package:bus_tracking_app/screens/main_page.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 // Import de LoginScreen
 
 class RegisterScreen extends StatefulWidget {
@@ -13,9 +19,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final emailEditingcontroller = TextEditingController();
   final passwordTextEditingcontroller = TextEditingController();
   final confirmTextEditingcontroller = TextEditingController();
+  final phoneTextEditingController = TextEditingController();
+
   bool _passwordVisible = false;
   bool _confirmPasswordVisible = false;
   final _formkey = GlobalKey<FormState>();
+
+  void submit() async {
+    // valdiate all the form feilds
+
+    if (_formkey.currentState!.validate()) {
+      await firebaseAuth
+          .createUserWithEmailAndPassword(
+        email: emailEditingcontroller.text.trim(),
+        password: passwordTextEditingcontroller.text.trim(),
+      )
+          .then((auth) async {
+        currentUser = auth.user;
+        if (currentUser != null) {
+          Map userMap = {
+            'id': currentUser!.uid,
+            'name': nameTextEditingcontroller.text.trim(),
+            'email': emailEditingcontroller.text.trim(),
+            'password': passwordTextEditingcontroller.text.trim(),
+            "phone": phoneTextEditingController.text.trim(),
+          };
+
+          DatabaseReference userRef =
+              FirebaseDatabase.instance.ref().child("users");
+          userRef.child(currentUser!.uid).set(userMap);
+        }
+        await Fluttertoast.showToast(msg: "successfully Registered");
+        Navigator.push(
+            context, MaterialPageRoute(builder: (c) => LoginScreen()));
+      }).catchError((errorMessage) {
+        Fluttertoast.showToast(msg: "error occured : \n $errorMessage ");
+      });
+    }
+    Fluttertoast.showToast(msg: "Not all fields are valid ");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,12 +214,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         onPressed: () {
-                          if (_formkey.currentState?.validate() ?? false) {
-                            // Ajouter la logique d'inscription ici
-                          }
+                          submit();
                         },
                         child: const Text(
-                          "Sign Up",
+                          "Register ",
                           style: TextStyle(
                             fontSize: 17,
                             color: Colors.white,
@@ -235,7 +275,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
         const SizedBox(height: 5),

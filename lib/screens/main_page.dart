@@ -252,6 +252,7 @@ class _MainScreenState extends State<MainScreen> {
           case Geofire.onKeyEntered:
             // Assure-toi que la structure de données est correcte
             var driverLocation = map["location"];
+
             ActiveNearbyAvailableDrivers activeNearbyAvailableDrivers =
                 ActiveNearbyAvailableDrivers();
 
@@ -369,9 +370,13 @@ class _MainScreenState extends State<MainScreen> {
       //drawer: DrawerScreen(),
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 138, 17, 194),
-        title: Text('Map Screen'),
+        title: Text(
+          'Map Screen',
+          style: TextStyle(color: Colors.white),
+        ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
+          color: Colors.white,
           onPressed: () {
             Navigator.pop(context);
           },
@@ -593,25 +598,6 @@ class _MainScreenState extends State<MainScreen> {
                               },
                               child: Text(
                                 "Change PickUp",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      Color.fromARGB(255, 138, 17, 194),
-                                  textStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  )),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            ElevatedButton(
-                              onPressed: () {},
-                              child: Text(
-                                "Order Ride",
                                 style: TextStyle(
                                   color: Colors.white,
                                 ),

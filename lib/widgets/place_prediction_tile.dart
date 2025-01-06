@@ -77,7 +77,7 @@ class _PlacePredictionTileDesignState extends State<PlacePredictionTileDesign> {
           children: [
             Icon(
               Icons.add_location,
-              color: Color(0xFFE1BEE7),
+              color: Color.fromARGB(255, 138, 17, 194),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -89,7 +89,7 @@ class _PlacePredictionTileDesignState extends State<PlacePredictionTileDesign> {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 16,
-                      color: Color(0xFFE1BEE7),
+                      color: Color.fromARGB(255, 138, 17, 194),
                     ),
                   ),
                   Text(
@@ -97,7 +97,7 @@ class _PlacePredictionTileDesignState extends State<PlacePredictionTileDesign> {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 16,
-                      color: Color(0xFFE1BEE7),
+                      color: Color.fromARGB(255, 138, 17, 194),
                     ),
                   ),
                 ],

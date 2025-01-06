@@ -1,5 +1,6 @@
+import 'package:bus_tracking_app/screens/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:bus_tracking_app/screens/choice_page.dart'; // Import de RoleSelectionScreen
+// Import de RoleSelectionScreen
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -46,8 +47,7 @@ class SplashScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const RoleSelectionScreen()),
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
                 );
               },
               child: const Text(

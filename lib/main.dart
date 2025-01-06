@@ -2,15 +2,18 @@ import 'package:bus_tracking_app/infoHandler/app_info.dart';
 import 'package:bus_tracking_app/screens/main_page.dart';
 import 'package:bus_tracking_app/screens/register_screen.dart';
 import 'package:bus_tracking_app/screens/login_screen.dart';
-import 'package:bus_tracking_app/screens/choice_page.dart'; // Importation de choice_page.dart
+
 import 'package:bus_tracking_app/screens/splash_page.dart';
 import 'package:bus_tracking_app/themeProvider/theme_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
   debugPrint = (String? message, {int? wrapWidth}) {};
   runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 }
 
 class MyApp extends StatelessWidget {
