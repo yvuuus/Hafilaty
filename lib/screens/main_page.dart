@@ -1,24 +1,24 @@
-// ignore_for_file: use_build_context_synchronously, sort_child_properties_last
-
-import "dart:async";
-import "package:bus_tracking_app/Assistants/assistants_methods.dart";
-import "package:bus_tracking_app/Assistants/geofire_assistant.dart";
-import "package:bus_tracking_app/global/global.dart";
-import "package:bus_tracking_app/global/map_key.dart";
-import "package:bus_tracking_app/infoHandler/app_info.dart";
-import "package:bus_tracking_app/models/active_nearby_available_drivers.dart";
-import "package:bus_tracking_app/models/directions.dart";
-import "package:bus_tracking_app/screens/drawer_screen.dart";
-import "package:bus_tracking_app/screens/precise_pickup_location.dart";
-import "package:bus_tracking_app/screens/search_places_screen.dart";
-import "package:bus_tracking_app/widgets/progress_dialog.dart";
-import "package:flutter/material.dart";
-import "package:flutter_geofire/flutter_geofire.dart";
-import "package:geolocator/geolocator.dart";
-import "package:google_maps_flutter/google_maps_flutter.dart";
+import 'dart:async';
+import 'package:bus_tracking_app/Assistants/assistants_methods.dart';
+import 'package:bus_tracking_app/Assistants/geofire_assistant.dart';
+import 'package:bus_tracking_app/global/global.dart';
+import 'package:bus_tracking_app/global/map_key.dart';
+import 'package:bus_tracking_app/infoHandler/app_info.dart';
+import 'package:bus_tracking_app/models/active_nearby_available_drivers.dart';
+import 'package:bus_tracking_app/models/directions.dart';
+import 'package:bus_tracking_app/screens/drawer_screen.dart';
+import 'package:bus_tracking_app/screens/precise_pickup_location.dart';
+import 'package:bus_tracking_app/screens/search_places_screen.dart';
+import 'package:bus_tracking_app/widgets/progress_dialog.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_geofire/flutter_geofire.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
 import 'package:geocoder2/geocoder2.dart';
-import "package:provider/provider.dart";
+import 'package:provider/provider.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
 class MainScreen extends StatefulWidget {
@@ -31,7 +31,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   LatLng? pickLocation;
   loc.Location location = loc.Location();
-  bool openNavigationDrawer = false; // Ajouter ceci au début de votre classe
+  bool openNavigationDrawer = false;
 
   final Completer<GoogleMapController> _controllerGoogleMap = Completer();
   static const CameraPosition _kGooglePlex = CameraPosition(
@@ -64,7 +64,6 @@ class _MainScreenState extends State<MainScreen> {
     _checkLocationPermissions();
   }
 
-  // Vérifier si les permissions de localisation sont accordées
   Future<void> _checkLocationPermissions() async {
     locationServiceEnabled = await location.serviceEnabled();
     if (!locationServiceEnabled) {
@@ -77,7 +76,6 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     if (locationPermission == LocationPermission.deniedForever) {
-      // Demander à l'utilisateur d'activer la localisation
       _showLocationPermissionDialog();
     } else {
       _getUserLocation();
@@ -163,55 +161,12 @@ class _MainScreenState extends State<MainScreen> {
           LatLngBounds(southwest: originLatlng, northeast: destinationLatlng);
     }
 
-    newGoogleMapController!
-        .animateCamera(CameraUpdate.newLatLngBounds(boundsLatLng, 65));
-
-    Marker destinationMarker = Marker(
-      markerId: MarkerId("destinationId"),
-      infoWindow: InfoWindow(
-          title: destinationPosition.locationName, snippet: "Destination"),
-      position: destinationLatlng,
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-    );
-
-    Marker originMarker = Marker(
-      markerId: MarkerId("originId"),
-      infoWindow:
-          InfoWindow(title: originPosition.locationName, snippet: "Origin"),
-      position: originLatlng,
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-    );
-
-    setState(() {
-      markerset.add(originMarker);
-      markerset.add(destinationMarker);
-    });
-
-    Circle originCircle = Circle(
-      circleId: CircleId("originId"),
-      fillColor: Colors.blue,
-      radius: 12,
-      strokeWidth: 3,
-      strokeColor: Colors.white,
-      center: originLatlng,
-    );
-
-    Circle destinationCircle = Circle(
-      circleId: CircleId("destinationId"),
-      fillColor: Colors.blue,
-      radius: 12,
-      strokeWidth: 3,
-      strokeColor: Colors.white,
-      center: destinationLatlng,
-    );
-
-    setState(() {
-      circleset.add(originCircle);
-      circleset.add(destinationCircle);
-    });
+    if (newGoogleMapController != null) {
+      newGoogleMapController!
+          .animateCamera(CameraUpdate.newLatLngBounds(boundsLatLng, 65));
+    }
   }
 
-  // Récupérer la position actuelle de l'utilisateur
   Future<void> _getUserLocation() async {
     userCurrentPosition = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
@@ -220,10 +175,15 @@ class _MainScreenState extends State<MainScreen> {
 
     CameraPosition cameraPosition =
         CameraPosition(target: latLngPosition, zoom: 16);
-    newGoogleMapController!
-        .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
-    //userName = currentUserInfo!.name!;
+    if (newGoogleMapController != null) {
+      newGoogleMapController!
+          .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    } else {
+      print("newGoogleMapController is null");
+      Fluttertoast.showToast(msg: "Map controller is not initialized.");
+    }
+
     String humanReadableAddress =
         await AssistantsMethods.searchAddressForGeographicCordinates(
             userCurrentPosition!, context);
@@ -233,9 +193,8 @@ class _MainScreenState extends State<MainScreen> {
   void initializeGeoFireListener() {
     Geofire.initialize("activeDrivers");
 
-    double radiusInKm = 70.0; // Rayon en kilomètres
+    double radiusInKm = 70.0;
 
-    // Affiche les coordonnées de l'utilisateur pour vérifier
     print(
         "User Current Position: ${userCurrentPosition!.latitude}, ${userCurrentPosition!.longitude}");
 
@@ -250,67 +209,66 @@ class _MainScreenState extends State<MainScreen> {
 
         switch (callBack) {
           case Geofire.onKeyEntered:
-            // Accède directement à l'attribut "l" qui contient le tableau de latitude et longitude
-            var driverData = map["l"];
+          case Geofire.onKeyMoved:
+            String? driverKey = map["key"];
+            if (driverKey != null) {
+              DatabaseReference driverRef = FirebaseDatabase.instance
+                  .ref()
+                  .child("activeDrivers")
+                  .child(driverKey);
 
-            // Vérifie si les données existent et sont un tableau valide
-            if (driverData != null &&
-                driverData is List &&
-                driverData.length >= 2) {
-              double latitude = driverData[0];
-              double longitude = driverData[1];
-              ActiveNearbyAvailableDrivers activeNearbyAvailableDrivers =
-                  ActiveNearbyAvailableDrivers();
+              driverRef.once().then((DatabaseEvent event) {
+                if (event.snapshot.value != null) {
+                  var driverData = event.snapshot.value as Map;
+                  if (driverData.containsKey("l")) {
+                    var location = driverData["l"];
+                    if (location is List && location.length >= 2) {
+                      double latitude = location[0];
+                      double longitude = location[1];
+                      ActiveNearbyAvailableDrivers
+                          activeNearbyAvailableDrivers =
+                          ActiveNearbyAvailableDrivers();
 
-              // Assigne les coordonnées
-              activeNearbyAvailableDrivers.locationLatitude = latitude;
-              activeNearbyAvailableDrivers.locationLongitude = longitude;
-              activeNearbyAvailableDrivers.driverId = map["key"];
+                      activeNearbyAvailableDrivers.locationLatitude = latitude;
+                      activeNearbyAvailableDrivers.locationLongitude =
+                          longitude;
+                      activeNearbyAvailableDrivers.driverId = driverKey;
 
-              print(
-                  "Driver ${map["key"]} found at location: Latitude = $latitude, Longitude = $longitude");
+                      if (callBack == Geofire.onKeyEntered) {
+                        print(
+                            "Driver $driverKey found at location: Latitude = $latitude, Longitude = $longitude");
+                        GeofireAssistant.activeNearByAvailableDriversList
+                            .add(activeNearbyAvailableDrivers);
+                      } else {
+                        print(
+                            "Driver $driverKey moved to new location: Latitude = $latitude, Longitude = $longitude");
+                        GeofireAssistant
+                            .updateActiveNearByAvailableDriverLocation(
+                                activeNearbyAvailableDrivers);
+                      }
 
-              GeofireAssistant.activeNearByAvailableDriversList
-                  .add(activeNearbyAvailableDrivers);
-
-              if (activeNearbyDriverKeysLoaded == true) {
-                displayActiveDriversOnUsersMap();
-              }
-            } else {
-              print("Error: Driver location data is missing or invalid");
+                      if (activeNearbyDriverKeysLoaded == true) {
+                        displayActiveDriversOnUsersMap();
+                      }
+                    } else {
+                      print(
+                          "Error: Driver location data is missing or invalid");
+                    }
+                  } else {
+                    print("Error: Location key is missing in driver data");
+                  }
+                } else {
+                  print("Error: Driver data snapshot is null");
+                }
+              }).catchError((error) {
+                print("Error fetching driver data: $error");
+              });
             }
             break;
 
           case Geofire.onKeyExited:
             GeofireAssistant.deleteOffLineDriversFRomList(map["key"]);
             displayActiveDriversOnUsersMap();
-            break;
-
-          case Geofire.onKeyMoved:
-            var driverData = map["l"];
-            if (driverData != null &&
-                driverData is List &&
-                driverData.length >= 2) {
-              double latitude = driverData[0];
-              double longitude = driverData[1];
-              ActiveNearbyAvailableDrivers activeNearbyAvailableDrivers =
-                  ActiveNearbyAvailableDrivers();
-
-              // Assigne les coordonnées mises à jour
-              activeNearbyAvailableDrivers.locationLatitude = latitude;
-              activeNearbyAvailableDrivers.locationLongitude = longitude;
-              activeNearbyAvailableDrivers.driverId = map["key"];
-
-              print(
-                  "Driver ${map["key"]} moved to new location: Latitude = $latitude, Longitude = $longitude");
-
-              GeofireAssistant.updateActiveNearByAvailableDriverLocation(
-                  activeNearbyAvailableDrivers);
-
-              displayActiveDriversOnUsersMap();
-            } else {
-              print("Error: Moved driver location data is missing or invalid");
-            }
             break;
 
           case Geofire.onGeoQueryReady:
@@ -325,7 +283,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  displayActiveDriversOnUsersMap() {
+  void displayActiveDriversOnUsersMap() {
     setState(() {
       markerset.clear();
       circleset.clear();
@@ -336,7 +294,7 @@ class _MainScreenState extends State<MainScreen> {
             LatLng(eachDriver.locationLatitude!, eachDriver.locationLongitude!);
 
         Marker marker = Marker(
-          markerId: MarkerId(" driver 1"),
+          markerId: MarkerId("driver_${eachDriver.driverId}"),
           position: eachDriveActivePosition,
           icon: activeNearbyIcon!,
           rotation: 360,
@@ -350,7 +308,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  createActiveNearByDriverIconMarker() {
+  void createActiveNearByDriverIconMarker() {
     if (activeNearbyIcon == null) {
       ImageConfiguration imageConfiguration =
           createLocalImageConfiguration(context, size: Size(2, 2));
@@ -361,7 +319,6 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  // Afficher une boîte de dialogue pour demander l'activation de la localisation
   void _showLocationPermissionDialog() {
     showDialog(
       context: context,
@@ -387,8 +344,6 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     createActiveNearByDriverIconMarker();
     return Scaffold(
-      //key: _scaffoldState,
-      //drawer: DrawerScreen(),
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 138, 17, 194),
         title: Text(
@@ -408,14 +363,13 @@ class _MainScreenState extends State<MainScreen> {
           GoogleMap(
             mapType: MapType.normal,
             initialCameraPosition: _kGooglePlex,
-            myLocationEnabled: true, // Désactive le marqueur par défaut
+            myLocationEnabled: true,
             zoomGesturesEnabled: true,
             zoomControlsEnabled: true,
             markers: markerset,
             circles: circleset,
             polylines: polyLineSet,
             padding: EdgeInsets.only(bottom: bottomPaddingOfMap),
-
             onMapCreated: (GoogleMapController controller) {
               _controllerGoogleMap.complete(controller);
               newGoogleMapController = controller;
@@ -425,51 +379,32 @@ class _MainScreenState extends State<MainScreen> {
               });
               _getUserLocation();
             },
-
-            //onCameraMove: (CameraPosition? position) {
-            // if (pickLocation != position!.target) {
-            //  setState(() {
-            //   pickLocation = position.target;
-            // });
-            //}
-            //},
-            /* onCameraIdle: () {
-              getAddressFromLatlng(); // Récupérer l'adresse après chaque mouvement de la caméra
-            },*/
           ),
-          // Afficher un indicateur de position lorsque la position est en cours de récupération
           if (userCurrentPosition == null)
             Center(
               child: CircularProgressIndicator(),
             ),
-          // Custom profile button for drawer
           Positioned(
             top: 50,
             left: 20,
             child: Container(
               child: GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (c) =>
-                              DrawerScreen())); // Naviguer vers la page du profil
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (c) => DrawerScreen()));
                 },
                 child: CircleAvatar(
-                  backgroundColor: Color.fromARGB(
-                      255, 138, 17, 194), // Couleur de fond du profil
-                  radius: 25, // Taille de l'avatar
+                  backgroundColor: Color.fromARGB(255, 138, 17, 194),
+                  radius: 25,
                   child: Icon(
-                    Icons.account_circle, // Icône de profil
-                    color: Colors.white, // Couleur de l'icône
-                    size: 30, // Taille de l'icône
+                    Icons.account_circle,
+                    color: Colors.white,
+                    size: 30,
                   ),
                 ),
               ),
             ),
           ),
-
-          //Ui for searching location
           Positioned(
             bottom: 0,
             left: 0,
@@ -549,7 +484,6 @@ class _MainScreenState extends State<MainScreen> {
                                 padding: EdgeInsets.all(5),
                                 child: GestureDetector(
                                   onTap: () async {
-                                    //go to search places screen
                                     var responseFromSearchScreen =
                                         await Navigator.push(
                                             context,
@@ -646,31 +580,6 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
           )
-          //Positioned(
-          // top: 40,
-          //right: 20,
-          //left: 20,
-          //child: Container(
-          // decoration: BoxDecoration(
-          //  border: Border.all(color: Colors.black),
-          //  color: const Color.fromARGB(255, 252, 249, 249),
-          //),
-          //padding: EdgeInsets.all(20),
-          //child: Text(
-          // _address != null
-          //   ? (_address!.length > 24
-          //       ? _address!.substring(0, 24) + "..."
-          //      : _address!)
-          // : "Not Getting Address ",
-          // overflow: TextOverflow.visible,
-          // softWrap: true,
-          //style: TextStyle(
-          //    fontSize: 16,
-          //    fontWeight: FontWeight.bold,
-          //    color: Color.fromARGB(255, 19, 15, 15)),
-          // ),
-          //),
-          // ),
         ],
       ),
     );
