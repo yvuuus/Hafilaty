@@ -1,13 +1,29 @@
 import 'package:bus_tracking_app/Assistants/request_assistant.dart';
+import 'package:bus_tracking_app/global/global.dart';
 import 'package:bus_tracking_app/global/map_key.dart';
 import 'package:bus_tracking_app/infoHandler/app_info.dart';
 import 'package:bus_tracking_app/models/direction_details_info.dart';
 import 'package:bus_tracking_app/models/directions.dart';
+import 'package:bus_tracking_app/models/user_model.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 class AssistantsMethods {
+  static void readOnlineUserCurrentInfo() {
+    currentUser = firebaseAuth.currentUser;
+    DatabaseReference reference =
+        FirebaseDatabase.instance.ref().child("Users").child(currentUser!.uid);
+
+    reference.once().then((snap) {
+      final DataSnapshot snapshot = snap.snapshot;
+      if (snapshot.exists) {
+        UserModelCurrentInfo = UserModel.fromSnapshot(snapshot);
+      }
+    });
+  }
+
   static Future<String> searchAddressForGeographicCordinates(
       Position position, context) async {
     String apiUrl =
