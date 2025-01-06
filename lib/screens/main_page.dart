@@ -230,7 +230,7 @@ class _MainScreenState extends State<MainScreen> {
     initializeGeoFireListener();
   }
 
-  initializeGeoFireListener() {
+  void initializeGeoFireListener() {
     Geofire.initialize("activeDrivers");
 
     double radiusInKm = 70.0; // Rayon en kilomètres
@@ -250,24 +250,34 @@ class _MainScreenState extends State<MainScreen> {
 
         switch (callBack) {
           case Geofire.onKeyEntered:
-            // Assure-toi que la structure de données est correcte
-            var driverLocation = map["location"];
+            // Accède directement à l'attribut "l" qui contient le tableau de latitude et longitude
+            var driverData = map["l"];
 
-            ActiveNearbyAvailableDrivers activeNearbyAvailableDrivers =
-                ActiveNearbyAvailableDrivers();
+            // Vérifie si les données existent et sont un tableau valide
+            if (driverData != null &&
+                driverData is List &&
+                driverData.length >= 2) {
+              double latitude = driverData[0];
+              double longitude = driverData[1];
+              ActiveNearbyAvailableDrivers activeNearbyAvailableDrivers =
+                  ActiveNearbyAvailableDrivers();
 
-            // Accède aux coordonnées sous "location"
-            activeNearbyAvailableDrivers.locationLatitude =
-                driverLocation["latitude"];
-            activeNearbyAvailableDrivers.locationLongitude =
-                driverLocation["longitude"];
-            activeNearbyAvailableDrivers.driverId = map["key"];
+              // Assigne les coordonnées
+              activeNearbyAvailableDrivers.locationLatitude = latitude;
+              activeNearbyAvailableDrivers.locationLongitude = longitude;
+              activeNearbyAvailableDrivers.driverId = map["key"];
 
-            GeofireAssistant.activeNearByAvailableDriversList
-                .add(activeNearbyAvailableDrivers);
+              print(
+                  "Driver ${map["key"]} found at location: Latitude = $latitude, Longitude = $longitude");
 
-            if (activeNearbyDriverKeysLoaded == true) {
-              displayActiveDriversOnUsersMap();
+              GeofireAssistant.activeNearByAvailableDriversList
+                  .add(activeNearbyAvailableDrivers);
+
+              if (activeNearbyDriverKeysLoaded == true) {
+                displayActiveDriversOnUsersMap();
+              }
+            } else {
+              print("Error: Driver location data is missing or invalid");
             }
             break;
 
@@ -277,19 +287,30 @@ class _MainScreenState extends State<MainScreen> {
             break;
 
           case Geofire.onKeyMoved:
-            var driverLocation = map["location"];
-            ActiveNearbyAvailableDrivers activeNearbyAvailableDrivers =
-                ActiveNearbyAvailableDrivers();
-            activeNearbyAvailableDrivers.locationLatitude =
-                driverLocation["latitude"];
-            activeNearbyAvailableDrivers.locationLongitude =
-                driverLocation["longitude"];
-            activeNearbyAvailableDrivers.driverId = map["key"];
+            var driverData = map["l"];
+            if (driverData != null &&
+                driverData is List &&
+                driverData.length >= 2) {
+              double latitude = driverData[0];
+              double longitude = driverData[1];
+              ActiveNearbyAvailableDrivers activeNearbyAvailableDrivers =
+                  ActiveNearbyAvailableDrivers();
 
-            GeofireAssistant.updateActiveNearByAvailableDriverLocation(
-                activeNearbyAvailableDrivers);
+              // Assigne les coordonnées mises à jour
+              activeNearbyAvailableDrivers.locationLatitude = latitude;
+              activeNearbyAvailableDrivers.locationLongitude = longitude;
+              activeNearbyAvailableDrivers.driverId = map["key"];
 
-            displayActiveDriversOnUsersMap();
+              print(
+                  "Driver ${map["key"]} moved to new location: Latitude = $latitude, Longitude = $longitude");
+
+              GeofireAssistant.updateActiveNearByAvailableDriverLocation(
+                  activeNearbyAvailableDrivers);
+
+              displayActiveDriversOnUsersMap();
+            } else {
+              print("Error: Moved driver location data is missing or invalid");
+            }
             break;
 
           case Geofire.onGeoQueryReady:
