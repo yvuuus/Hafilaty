@@ -186,7 +186,14 @@ class _MainScreenState extends State<MainScreen> {
       markerset.add(originMarker);
       markerset.add(destinationMarker);
     });
+
+    // Update the UI to show the trip duration
+    setState(() {
+      tripDuration = directionDetailsInfo.duration_text!;
+    });
   }
+
+  String tripDuration = "";
 
   Future<void> _getUserLocation() async {
     userCurrentPosition = await Geolocator.getCurrentPosition(
@@ -221,7 +228,7 @@ class _MainScreenState extends State<MainScreen> {
 
     Geofire.queryAtLocation(userCurrentPosition!.latitude,
             userCurrentPosition!.longitude, radiusInKm)!
-        .listen((map) {
+        .listen((map) async {
       print("GeoFire query result: $map");
 
       if (map != null) {
@@ -238,7 +245,7 @@ class _MainScreenState extends State<MainScreen> {
                   .child("activeDrivers")
                   .child(driverKey);
 
-              driverRef.once().then((DatabaseEvent event) {
+              driverRef.once().then((DatabaseEvent event) async {
                 if (event.snapshot.value != null) {
                   var driverData = event.snapshot.value as Map;
                   if (driverData.containsKey("l")) {
@@ -271,6 +278,10 @@ class _MainScreenState extends State<MainScreen> {
                       if (activeNearbyDriverKeysLoaded == true) {
                         displayActiveDriversOnUsersMap();
                       }
+
+                      // Draw polyline from driver to origin
+                      await drawPolylineFromDriverToOrigin(
+                          LatLng(latitude, longitude));
                     } else {
                       print(
                           "Error: Driver location data is missing or invalid");
@@ -361,6 +372,24 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
+  Future<void> drawPolylineFromDriverToOrigin(LatLng driverLatLng) async {
+    var originPosition =
+        Provider.of<AppInfo>(context, listen: false).userPickUpLocation;
+
+    var originLatlng = LatLng(
+        originPosition!.locationLatitude!, originPosition.locationLongitude!);
+
+    var directionDetailsInfo =
+        await AssistantsMethods.obtainOriginToDestinationDirectionDetails(
+            driverLatLng, originLatlng);
+
+    setState(() {
+      driverToOriginDuration = directionDetailsInfo.duration_text!;
+    });
+  }
+
+  String driverToOriginDuration = "";
+
   @override
   Widget build(BuildContext context) {
     createActiveNearByDriverIconMarker();
@@ -423,6 +452,53 @@ class _MainScreenState extends State<MainScreen> {
                     size: 30,
                   ),
                 ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 10,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Text(
+                        "Temps de trajet : $tripDuration",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 138, 17, 194),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Text(
+                        "Temps de trajet conducteur à origine : $driverToOriginDuration",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 138, 17, 194),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
