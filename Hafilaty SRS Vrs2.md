@@ -164,8 +164,55 @@ The Bus Tracking System is designed to integrate seamlessly into the existing pu
 
 ## 3. System Features
 
-### 3.1 Feature: Bus Tracking
+### 3.1 Feature: User Authentication
 
+#### 3.1.1 **User Login**
+**Description**: The user will be able to log into their account using their credentials (email and password).
+- **Functional Requirements**:
+  - Users must enter valid credentials to log in.  
+  - The system will authenticate using Firebase Authentication.  
+  - If login is successful, users are redirected to the home screen.
+  
+#### 3.1.2 **User Logout**
+**Description**: The user will be able to log out of their account from the app.
+- **Functional Requirements**:
+  - Users can log out from the app, which clears their session and returns them to the login screen.
+
+#### 3.1.3 **User Registration**
+**Description**: New users will be able to create an account by providing their email and creating a password.
+- **Functional Requirements**:
+  - Users need to provide a valid email and password to register.  
+  - A confirmation email will be sent for account verification.
+  
+#### 3.1.4 **Password Reset**
+**Description**: Users can reset their passwords if they forget them.
+- **Functional Requirements**:
+  - Users must provide their registered email.  
+  - A password reset link will be sent to the email provided.
+  
+### 3.2 Feature: Driver Authentication
+
+#### 3.2.1 **Driver Login**
+**Description**: The bus driver will be able to log into their account using their credentials (email and password).
+- **Functional Requirements**:
+  - Drivers must enter valid credentials to log in.  
+  - The system will authenticate using Firebase Authentication.  
+  - If login is successful, drivers are redirected to the driver dashboard.
+
+#### 3.2.2 **Driver Logout**
+**Description**: The driver will be able to log out of their account from the app.
+- **Functional Requirements**:
+  - Drivers can log out from the app, which clears their session and returns them to the login screen.
+
+#### 3.2.3 **Driver Registration**
+**Description**: New drivers can register by providing necessary credentials.
+- **Functional Requirements**:
+  - Drivers need to provide their email and password to register.  
+  - Admin will verify their credentials before granting full access.
+
+---
+
+### 3.3 Feature: Bus Tracking
 **Description**: Allows passengers to track the live location of buses in real-time on a map.
 
 **Functional Requirements**:
@@ -185,5 +232,3 @@ The Bus Tracking System is designed to integrate seamlessly into the existing pu
   Users can zoom in/out and move the map to see other buses. Multiple bus routes can be displayed at once, with each bus color-coded based on its status (on-time, delayed).
 
 ---
-
-###
