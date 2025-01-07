@@ -1,50 +1,35 @@
-import 'package:bus_tracking_app/global/global.dart';
-import 'package:bus_tracking_app/main.dart';
-import 'package:bus_tracking_app/screens/forgot_password.dart';
-import 'package:bus_tracking_app/screens/main_page.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
+import 'package:bus_tracking_app/screens/login_screen.dart';
 import 'package:bus_tracking_app/screens/register_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:bus_tracking_app/global/global.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ForgotPassword extends StatefulWidget {
+  const ForgotPassword({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ForgotPassword> createState() => _ForgotPasswordState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgotPasswordState extends State<ForgotPassword> {
   final emailTextEditingController = TextEditingController();
-  final passwordTextEditingController = TextEditingController();
-  final _formKey = GlobalKey<FormState>(); // Global key for the form
-  bool _passwordVisible = false;
+  final _formKey = GlobalKey<FormState>();
 
-  void submit() async {
-    // valdiate all the form feilds
-
-    if (_formKey.currentState!.validate()) {
-      await firebaseAuth
-          .signInWithEmailAndPassword(
-        email: emailTextEditingController.text.trim(),
-        password: passwordTextEditingController.text.trim(),
-      )
-          .then((auth) async {
-        currentUser = auth.user;
-        await Fluttertoast.showToast(msg: "successfully logged in");
-        Navigator.push(
-            context, MaterialPageRoute(builder: (c) => MainScreen()));
-      }).catchError((errorMessage) {
-        Fluttertoast.showToast(msg: "error occured : \n $errorMessage ");
-      });
-    }
+  void _submit() {
+    firebaseAuth
+        .sendPasswordResetEmail(email: emailTextEditingController.text.trim())
+        .then((value) {
+      Fluttertoast.showToast(
+          msg:
+              "We have sent you an email to recover your password, please check your email.");
+    }).onError((error, stackTrace) {
+      Fluttertoast.showToast(msg: "Error occurred: \n ${error.toString()} ");
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    bool darkTheme =
-        MediaQuery.of(context).platformBrightness == Brightness.dark;
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -103,52 +88,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                           ),
                           const SizedBox(height: 20),
-                          _buildTextFieldWithLabel(
-                            controller: passwordTextEditingController,
-                            label: "Password",
-                            hintText: "Password",
-                            icon: Icons.lock,
-                            obscureText: !_passwordVisible,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please enter your password";
-                              }
-                              return null;
-                            },
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _passwordVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: const Color(0xFF6A1B9A),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _passwordVisible = !_passwordVisible;
-                                });
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 15),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (c) => ForgotPassword()));
-                              },
-                              child: Text(
-                                "Forgot Password?",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.purple.shade700,
@@ -162,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () {
                               // Validate form before proceeding
                               if (_formKey.currentState?.validate() ?? false) {
-                                submit();
+                                _submit();
                               } else {
                                 // Show an error if the form is invalid
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -173,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                             },
                             child: const Text(
-                              "Log In",
+                              "Send Reset Password Link",
                               style: TextStyle(
                                 fontSize: 17,
                                 color: Colors.white,
@@ -182,22 +121,22 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (c) => RegisterScreen()));
-                              },
-                              child: const Text(
-                                  "Don't have an account? Register Now",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ))),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (c) => LoginScreen()));
+                            },
+                            child: const Text(
+                              "Already have an account? Login",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                           const SizedBox(height: 10),
                           Image.asset(
-                            darkTheme
-                                ? 'images/passenger.png'
-                                : 'images/passenger.png',
+                            'images/passenger.png',
                             fit: BoxFit.contain,
                           ),
                         ],

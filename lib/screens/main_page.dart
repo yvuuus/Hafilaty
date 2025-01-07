@@ -165,6 +165,27 @@ class _MainScreenState extends State<MainScreen> {
       newGoogleMapController!
           .animateCamera(CameraUpdate.newLatLngBounds(boundsLatLng, 65));
     }
+
+    // Add markers for origin and destination
+    Marker originMarker = Marker(
+      markerId: MarkerId("originId"),
+      infoWindow: InfoWindow(title: "Origin", snippet: "Origin Location"),
+      position: originLatlng,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+    );
+
+    Marker destinationMarker = Marker(
+      markerId: MarkerId("destinationId"),
+      infoWindow:
+          InfoWindow(title: "Destination", snippet: "Destination Location"),
+      position: destinationLatlng,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+    );
+
+    setState(() {
+      markerset.add(originMarker);
+      markerset.add(destinationMarker);
+    });
   }
 
   Future<void> _getUserLocation() async {
