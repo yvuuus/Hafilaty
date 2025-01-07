@@ -43,7 +43,12 @@ Link: https://stackoverflow.com
 
 ### 1.4.6 Course Materials and Tutorials
 Tutorials, course materials, and other online resources on Firebase, Google Maps API, Flask, and PHP contributed to the understanding and successful implementation of project features.
-
+PHP:
+https://www.youtube.com/playlist?list=PLPRLhfAOx8T5lJGqAJEKeH3CmMroFXt8Y
+GOOGLE MAP API : 
+https://www.youtube.com/watch?v=M7cOmiSly3Q
+FIREBASE: 
+https://www.youtube.com/watch?v=FYcYVkTowRs&t=14s
 
 ## 1.5 Overview
 
