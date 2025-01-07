@@ -67,7 +67,7 @@ The Bus Tracking System is designed to integrate seamlessly into the existing pu
 
 #### **User Interface**
 
-- Enabling users to Track the live location of buses using GPS and updating the location in real-time and displaying their current position on a map.  
+- Enabling users to Track the live location of buses using GPS and updating the location in real-time and displaying their current position on a map and the estimated arrival time from pickup location to destination 
 - Enables users to create and manage personal accounts.  
 - Allows saving of the most frequented places.  
 - Provides real-time ETA for buses at designated stops.  
@@ -94,7 +94,6 @@ The Bus Tracking System is designed to integrate seamlessly into the existing pu
   - Can view real-time bus locations and ETAs.  
   - Can search bus routes and schedules.  
   - No administrative control over the system.  
-  - Can save their most frequented places.
 
 #### **Bus Drivers**
 
@@ -140,8 +139,8 @@ The Bus Tracking System is designed to integrate seamlessly into the existing pu
   - **Network**: Mobile network (3G, 4G, 5G) or Wi-Fi for real-time updates on routes, schedules, and any changes from administrators.
 
 - **Administrators (Fleet Managers)**:
-  - **Devices**: Mobile tablets or smartphones.  
-  - **Operating Systems**: Android (v8.0 or later).   
+  - **Devices**: Laptops or computers.  
+  - **Operating Systems**: windows 10 or later .   
   - **Network**: Requires stable 4G/5G or Wi-Fi connection for accessing the Administrator Dashboard through a mobile app.
 
 #### **GPS and Tracking Systems**
@@ -167,62 +166,24 @@ The Bus Tracking System is designed to integrate seamlessly into the existing pu
 
 ### 3.1 Feature: Bus Tracking
 
-- **Description**: Allows passengers to track the live location of buses in real-time on a map.  
-- **Functional Requirements**:
-  - The app should display real-time bus locations.  
-  - The app should update the ETA dynamically based on the bus’s location and traffic.  
-  - The app should allow users to view the route of the bus on the map.  
+**Description**: Allows passengers to track the live location of buses in real-time on a map.
 
-### 3.2 Feature: Route and Schedule
-
-- **Description**: Allows users to view the routes and schedules of buses.  
-- **Functional Requirements**:
-  - The app should show a list of available routes, including stop names, timings, and travel times.  
-  - The app should provide detailed bus schedules for each route.  
-
-## 4. External Interface Requirements
-
-### 4.1 User Interfaces
-
-- The user interface will consist of various screens, including:
-  - Home Screen
-  - Bus Tracking Screen
-  - Login/Register Screen
-  - Profile Screen
-  - Route/ETA Information Screen
-  - Notification/Alert Screen
-
-### 4.2 Hardware Interfaces
-
-- The mobile device will need to have GPS and network capabilities to receive real-time bus location data and for tracking purposes.
-
-### 4.3 Software Interfaces
-
-- **Google Maps API**: For mapping and bus route visualization.  
-- **Firebase**: For backend integration and real-time database updates.
-
-### 4.4 Communication Interfaces
-
-- **Real-Time Data Sync**: The app will communicate with Firebase to keep data updated in real-time.  
-- **Bus Driver Communication**: Notifications and messages will be sent to drivers via the backend system.
-
-## 5. Non-Functional Requirements
-
-### 5.1 Performance Requirements
-- The app must display bus locations in real-time with minimal delay (less than 5 seconds).
+**Functional Requirements**:
+- **Real-Time Location Updates**:  
+  The app fetches the bus’s current GPS coordinates every 5 seconds. The map updates automatically to display the new bus location.
   
-### 5.2 Security Requirements
-- All data transmitted between users and the server will be encrypted using HTTPS.
-- User credentials (for the bus driver login) will be securely stored in Firebase.
+- **Tracking on the Map**:  
+  When a user taps on a bus icon, a popup will display additional information about the bus, such as the route, next stop, and ETA.
+  
+- **Estimated Time of Arrival (ETA)**:  
+  The ETA is calculated dynamically based on real-time traffic and bus location data. The app will refresh the ETA every 30 seconds or whenever a significant change in the bus’s position is detected.
 
-### 5.3 Scalability Requirements
-- The system should be able to scale as more buses and routes are added.
+- **Notifications**:  
+  Push notifications will be sent when a bus is within 5 minutes of the selected stop. If there are any delays exceeding 10 minutes, the app will send a delay notification.
 
-### 5.4 Usability Requirements
-- The app should have an intuitive interface with simple navigation to accommodate users with minimal tech experience.
+- **User Interaction with the Map**:  
+  Users can zoom in/out and move the map to see other buses. Multiple bus routes can be displayed at once, with each bus color-coded based on its status (on-time, delayed).
 
-## 6. Appendix
+---
 
-- **Mockups/Designs**: Visual representations of the app screens.  
-- **Glossary**: Definitions of key terms used in the document.
-
+###
