@@ -19,7 +19,31 @@ UI: User Interface
 
 ## 1.4 References
 
-Mention any external documents, regulations, or standards used in developing the software.
+This section provides a list of resources and materials consulted during the development of the mobile bus tracking application:
+
+### 1.4.1 Firebase Documentation
+Firebase provides backend services for real-time database and user authentication. This documentation was used to configure and integrate Firebase into the app.
+Link: https://firebase.google.com/docs
+
+### 1.4.2 Google Maps API Documentation
+The Google Maps API was used to display maps and enable navigation features in the application. This resource guided the integration of mapping services.
+Link: https://developers.google.com/maps/documentation
+
+### 1.4.3 Flask Documentation
+Flask was utilized for creating and managing the backend services. This documentation provided guidance on Flask setup and usage.
+Link: https://flask.palletsprojects.com/en/latest/
+
+### 1.4.4 PHP Documentation
+PHP was employed for server-side scripting and backend development. This reference helped with coding and troubleshooting.
+Link: https://www.php.net/docs.php
+
+### 1.4.5 Stack Overflow and Community Forums
+Online technical forums were occasionally referred to for troubleshooting and finding solutions to implementation challenges.
+Link: https://stackoverflow.com
+
+### 1.4.6 Course Materials and Tutorials
+Tutorials, course materials, and other online resources on Firebase, Google Maps API, Flask, and PHP contributed to the understanding and successful implementation of project features.
+
 
 ## 1.5 Overview
 
