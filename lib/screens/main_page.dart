@@ -435,27 +435,6 @@ class _MainScreenState extends State<MainScreen> {
               child: CircularProgressIndicator(),
             ),
           Positioned(
-            top: 50,
-            left: 20,
-            child: Container(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (c) => DrawerScreen()));
-                },
-                child: CircleAvatar(
-                  backgroundColor: Color.fromARGB(255, 138, 17, 194),
-                  radius: 25,
-                  child: Icon(
-                    Icons.account_circle,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
             top: 10,
             left: 0,
             right: 0,
@@ -678,6 +657,31 @@ class _MainScreenState extends State<MainScreen> {
             ),
           )
         ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map, color: Colors.white),
+            label: 'Map',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle, color: Colors.white),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: 0,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 138, 17, 194),
+        onTap: (index) {
+          // Handle navigation logic here
+          if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DrawerScreen()),
+            );
+          }
+        },
       ),
     );
   }

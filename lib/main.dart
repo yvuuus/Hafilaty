@@ -2,7 +2,6 @@ import 'package:bus_tracking_app/infoHandler/app_info.dart';
 import 'package:bus_tracking_app/screens/main_page.dart';
 import 'package:bus_tracking_app/screens/register_screen.dart';
 import 'package:bus_tracking_app/screens/login_screen.dart';
-
 import 'package:bus_tracking_app/screens/splash_page.dart';
 import 'package:bus_tracking_app/themeProvider/theme_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
