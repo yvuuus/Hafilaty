@@ -1,17 +1,24 @@
-# Software Requirements Specification (SRS)
+# Software Requirements Specification for <Hafilaty>
 
 ## 1. Introduction
-This document provides a detailed description of the software requirements for the Hafilaty Mobile Bus Tracking App, aimed at providing real-time bus tracking and management features for both passengers and bus drivers.
 
 ### 1.1 Purpose
 The purpose of this SRS is to outline the functional and non-functional requirements for the development of the Hafilaty Mobile Bus Tracking App. This application helps bus passengers by providing real-time tracking of bus locations to reduce waiting times and improve convenience. The intended audience includes bus passengers, bus drivers, and administrators.
 
-### 1.2 Scope
-The Hafilaty app will include features for:
-- Passengers to track buses, view routes, choose destinations, choose pickup locations, login, logout, register, change passwords, view their location on the map, and track the driver.
-- Bus drivers to update statuses, confirm stops, view schedules, login, and logout.
-- Integration with Google Maps for navigation.
-- Firebase for real-time database updates.
+
+### 1.2 Product Scope
+The Hafilaty app is a bus tracking application designed to improve the commuting experience for passengers and enhance efficiency for bus agencies. The app aims to provide real-time tracking, route information, and communication between passengers, drivers, and the agency.
+
+Key features include:
+
+- For Passengers: Tracking buses in real-time, viewing routes, selecting destinations and pickup locations, managing user accounts (registration, login, logout, and password changes), and viewing their current location on the map.
+- For Drivers: Updating trip statuses, confirming stops, viewing schedules, and managing driver accounts (login and logout).
+- For Bus Agencies: Managing bus schedules, assigning routes, and maintaining driver accounts.
+The app integrates with Google Maps for navigation and utilizes Firebase for real-time database updates to ensure data consistency and reliability.
+
+This project aligns with the broader goal of leveraging technology to optimize public transportation, reduce wait times, and enhance the commuting experience for users.
+
+
 
 ### 1.3 Definitions, Acronyms, and Abbreviations
 - **GPS**: Global Positioning System
